@@ -1,35 +1,53 @@
 import { useEffect } from "react";
 
-/* Ativa a animação depois da página ter sido carregada completamente */
+/* Revela por posição visual: primeiro o topo da página, depois a esquerda da linha. */
 export default function ScrollReveal() {
     useEffect(() => {
-        const itens = document.querySelectorAll<HTMLElement>("[data-reveal]");
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
 
-        const observer = new IntersectionObserver((entradas, instancia) => {
+        const pendentes = new Set<HTMLElement>();
+        let timer = 0;
+
+        const observer = new IntersectionObserver((entradas) => {
             entradas.forEach((entrada) => {
-                if (!entrada.isIntersecting) return;
-                const item = entrada.target as HTMLElement;
-                item.classList.remove("opacity-0", "translate-y-5");
-                item.classList.add("opacity-100", "translate-y-0");
-                instancia.unobserve(entrada.target);
+                if (entrada.isIntersecting) pendentes.add(entrada.target as HTMLElement);
             });
+            revelarProximo();
         }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
 
-        const atrasos = ["delay-0", "delay-75", "delay-150", "delay-200", "delay-300", "delay-500"];
-        itens.forEach((item, index) => {
-            item.classList.add(
-                "opacity-0",
-                "translate-y-5",
-                "transition-all",
-                "duration-[650ms]",
-                "ease-[cubic-bezier(.2,.7,.2,1)]",
-                "motion-reduce:transition-none",
-                atrasos[index % atrasos.length],
-            );
+        function revelarProximo() {
+            if (timer || pendentes.size === 0) return;
+
+            timer = window.setTimeout(() => {
+                // Usa a posição atual: de cima para baixo e, na mesma linha, da esquerda para a direita.
+                const ordenados = [...pendentes].sort((a, b) => {
+                    const posicaoA = a.getBoundingClientRect();
+                    const posicaoB = b.getBoundingClientRect();
+                    const diferencaVertical = posicaoA.top - posicaoB.top;
+                    return Math.abs(diferencaVertical) > 12
+                        ? diferencaVertical
+                        : posicaoA.left - posicaoB.left;
+                });
+                const item = ordenados[0];
+                pendentes.delete(item);
+                item.classList.remove("opacity-0", "translate-y-5");
+                item.classList.add("opacity-100", "translate-y-0");
+                observer.unobserve(item);
+                timer = 0;
+                revelarProximo();
+            }, 100);
+        }
+
+        document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((item) => {
+            item.classList.add("opacity-0", "translate-y-5", "transition-all", "duration-700", "ease-out", "motion-reduce:transition-none");
             observer.observe(item);
         });
-        return () => observer.disconnect();
+
+        return () => {
+            observer.disconnect();
+            window.clearTimeout(timer);
+            pendentes.clear();
+        };
     }, []);
 
     return null;
