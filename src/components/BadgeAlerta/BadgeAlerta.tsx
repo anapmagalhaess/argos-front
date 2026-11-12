@@ -86,7 +86,7 @@ export default function BadgeAlerta({
     const texto = titulo ?? rotulo;
 
     return (
-    <div className={`flex items-center font-semibold ${classes} ${medidas.caixa}`}>
+    <div data-reveal className={`group flex items-center font-semibold ${classes} ${medidas.caixa}`}>
         {/* stroke="currentColor": o ícone herda a cor do texto */}
         <svg
             viewBox="0 0 24 24"
@@ -96,7 +96,7 @@ export default function BadgeAlerta({
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
-            className={`shrink-0 ${medidas.icone}`}>
+            className={`shrink-0 transition-transform duration-200 group-hover:scale-[1.12] group-hover:-rotate-6 motion-reduce:transition-none ${medidas.icone}`}>
             {TRACOS[nivel]}
         </svg>
 
