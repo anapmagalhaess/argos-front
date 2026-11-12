@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  /*Paleta de cores*/
+  --color-fundo: #17110D;
+  --color-card: #1F1814;
+  --color-linha: #3A2F27;
+  --color-bege: #E6DAC6;
+  --color-texto-2: #A8997F;
+  --color-salvia: #7DBE8C;
+  --color-mata: #2E5A43;
+  --color-ambar: #D9A650;
+
+  --color-terra: #8A3B2E;
+  --color-terra-funda: #3A1A15;
+  --color-terra-fundo: #2A1713;
+
+  /* Níveis de alerta (só para avisos) */
+  --color-nivel-1: #2E7D32;
+  --color-nivel-2: #F9D648;
+  --color-nivel-3: #E8711A;
+  --color-nivel-4: #C62828;
+
+  /* Fontes (carregue Lexend e Inter no index.html via Google Fonts) */
+  --font-titulo: "Lexend", sans-serif;
+  --font-corpo: "Inter", sans-serif;
+}
