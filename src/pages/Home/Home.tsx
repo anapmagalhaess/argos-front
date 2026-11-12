@@ -5,12 +5,14 @@ import Navbar from "../../components/Navbar/Navbar";
 import Metricas from "../../components/Metricas/Metricas";
 import Steps from "../../components/Steps/Steps";
 import Footer from "../../components/Footer/Footer";
+import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
 
 // Home do Argos convertida do protótipo HTML para JSX.
 
 export default function Home() {
     return (
         <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege">
+            <ScrollReveal />
             <section id="inicio" className="relative overflow-hidden bg-[radial-gradient(700px_420px_at_82%_38%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_8%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 {/* Linhas de relevo como background */}
                 <svg aria-hidden="true" viewBox="0 0 1440 760" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full opacity-70">
@@ -26,18 +28,18 @@ export default function Home() {
                 <Navbar/>
 
                 <div className="relative mx-auto grid max-w-[1400px] grid-cols-[repeat(auto-fit,minmax(340px,1fr))] items-center gap-14 px-7 pt-14 pb-[104px]">
-                    <div className="flex flex-col gap-[26px]">
+                    <div data-reveal className="flex flex-col gap-[26px]">
                         <p className="text-sm font-semibold uppercase tracking-[0.12em] text-salvia">Inteligência do campo para o pequeno produtor</p>
                         <h1 className="font-titulo text-[clamp(44px,6vw,80px)] leading-none font-extrabold uppercase text-bege">De olho na sua roça.</h1>
                         <p className="max-w-[540px] text-[clamp(19px,2vw,22px)] text-texto-2">O Argos avisa antes da chuva forte, da seca e da praga. Em palavras simples, com figura e voz, no celular de quem trabalha a terra.</p>
                         <div className="mt-1.5 flex flex-wrap gap-3.5">
-                            <a href="#triagem" className="inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo">Começar a triagem</a>
-                            <a href="#como" className="inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-linha bg-transparent px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-bege">Ver como funciona</a>
+                            <a href="#triagem" className="inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.035] hover:brightness-110 focus-visible:scale-[1.035] active:scale-[.98] motion-reduce:transition-none">Começar a triagem</a>
+                            <a href="#como" className="inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-linha bg-transparent px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-bege transition-transform duration-150 hover:scale-[1.035] hover:border-bege focus-visible:scale-[1.035] active:scale-[.98] motion-reduce:transition-none">Ver como funciona</a>
                         </div>
                     </div>
 
                     {/* Desenho vetorial do trator e da lavoura */}
-                    <div className="relative pb-12">
+                    <div data-reveal className="relative pb-12">
                         <div className="overflow-hidden rounded-[32px] border border-linha bg-card shadow-[0_30px_70px_rgba(0,0,0,.5)]">
                             <svg viewBox="0 0 480 420" className="block w-full" role="img" aria-label="Trator cruzando uma plantação de trigo sob o sol">
                                 <defs>
@@ -95,7 +97,7 @@ export default function Home() {
             {/* Dores*/}
             <section id="dor" className="bg-bege py-24 text-fundo">
                 <div className="mx-auto max-w-[1200px] px-7">
-                    <div className="flex max-w-[780px] flex-col gap-3.5">
+                    <div data-reveal className="flex max-w-[780px] flex-col gap-3.5">
                         <p className="text-sm font-semibold uppercase tracking-[0.12em] text-mata">A dor</p>
                         <h2 className="font-titulo text-[clamp(32px,4vw,50px)] leading-[1.08] font-extrabold uppercase">Quem planta decide no escuro.</h2>
                         <p className="text-[21px] text-fundo">Na roça do pequeno produtor, uma safra inteira pode se perder em poucos dias:
@@ -120,23 +122,23 @@ export default function Home() {
             {/* Diferencial e legenda de severidade com BadgeAlerta. */}
             <section className="border-t border-linha bg-fundo py-24">
                 <div className="mx-auto grid max-w-[1200px] grid-cols-[repeat(auto-fit,minmax(340px,1fr))] items-start gap-14 px-7">
-                    <div className="flex flex-col gap-[18px]">
+                    <div data-reveal className="flex flex-col gap-[18px]">
                         <p className="text-sm font-semibold uppercase tracking-[0.12em] text-salvia">O diferencial</p>
                         <h2 className="font-titulo text-[clamp(32px,4vw,50px)] leading-[1.08] font-extrabold uppercase text-bege">Eles respondem. 
                             <span className="text-salvia">O Argos avisa antes.</span>
                         </h2>
                         <p className="text-texto-2">Um vizinho que entende do assunto e não espera você perguntar. Todo aviso traz a fonte oficial, 
                             uma figura e palavras do campo.</p>
-                        <a href="#triagem" className="mt-2 inline-flex min-h-14 self-start items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo">Começar agora</a>
+                        <a href="#triagem" className="mt-2 inline-flex min-h-14 self-start items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.035] hover:brightness-110 focus-visible:scale-[1.035] active:scale-[.98] motion-reduce:transition-none">Começar agora</a>
                     </div>
-                    <div className="flex flex-col gap-3.5"><p className="text-sm font-semibold uppercase tracking-[0.12em] text-texto-2">Quatro níveis de aviso. Sempre desenho e palavra.</p><BadgeAlerta nivel={1} mostrarNumero /><BadgeAlerta nivel={2} mostrarNumero /><BadgeAlerta nivel={3} mostrarNumero /><BadgeAlerta nivel={4} mostrarNumero /></div>
+                    <div data-reveal className="flex flex-col gap-3.5"><p className="text-sm font-semibold uppercase tracking-[0.12em] text-texto-2">Quatro níveis de aviso. Sempre desenho e palavra.</p><BadgeAlerta nivel={1} mostrarNumero /><BadgeAlerta nivel={2} mostrarNumero /><BadgeAlerta nivel={3} mostrarNumero /><BadgeAlerta nivel={4} mostrarNumero /></div>
                 </div>
             </section>
 
             {/* Explorar */}
             <section id="triagem" className="border-t border-linha bg-card py-24">
                 <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-7">
-                    <h2 className="text-center font-titulo text-[clamp(30px,3.6vw,44px)] leading-tight font-extrabold uppercase text-bege">Explore o Argos</h2>
+                    <h2 data-reveal className="text-center font-titulo text-[clamp(30px,3.6vw,44px)] leading-tight font-extrabold uppercase text-bege">Explore o Argos</h2>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5">
                         <CardExplorar titulo="Triagem" descricao="Responda com figuras e monte o perfil da sua roça." chamada="COMEÇAR →" para="/triagem" />
                         <CardExplorar titulo="Hoje" descricao="Os avisos do seu município, com a fonte." chamada="VER AVISOS →" para="/hoje" />
