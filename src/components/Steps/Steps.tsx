@@ -53,11 +53,14 @@ export default function Steps() {
                         <article
                             key={passo.titulo}
                             data-reveal
-                            data-step-complete={etapaAtiva > index}
-                            data-step-current={etapaAtiva === index + 1}
+                            data-step-complete={etapaAtiva > index ? "true" : "false"}
+                            data-step-current={etapaAtiva === index + 1 ? "true" : "false"}
                             aria-current={etapaAtiva === index + 1 ? "step" : undefined}
-                            className={`relative pt-[34px] before:absolute before:top-[11px] before:right-[-20px] before:left-0 before:h-0.5 before:bg-linha before:transition-colors before:duration-400 after:absolute after:top-0 after:left-0 after:box-border after:h-6 after:w-6 after:rounded-full after:border-[3px] after:border-salvia after:bg-terra-fundo after:transition-transform after:duration-400 ${etapaAtiva > index ? "before:bg-salvia after:bg-salvia" : ""} ${etapaAtiva === index + 1 ? "after:animate-pulse" : ""} motion-reduce:after:animate-none`}
+                            className="relative pt-[34px] before:absolute before:top-[11px] before:right-[-20px] before:left-0 before:z-0 before:h-0.5 before:bg-linha before:transition-colors before:duration-400 data-[step-complete=true]:before:bg-salvia"
                         >
+                            {/* O ponto sólido fica por cima do anel animado, sem perder o preenchimento. */}
+                            <span aria-hidden="true" className={`absolute top-0 left-0 z-0 h-6 w-6 rounded-full bg-salvia ${etapaAtiva === index + 1 ? "animate-ping" : "scale-0"} motion-reduce:animate-none`} />
+                            <span aria-hidden="true" className={`absolute top-0 left-0 z-10 box-border h-6 w-6 rounded-full border-[3px] border-salvia transition-colors duration-300 ${etapaAtiva > index ? "bg-salvia" : "bg-terra-fundo"}`} />
                             <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-salvia">Passo {index + 1}</p>
                             <h3 className="mt-1.5 font-titulo text-[23px] font-semibold text-bege">{passo.titulo}</h3>
                             <p className="mt-1.5 text-base text-texto-2">{passo.descricao}</p>
