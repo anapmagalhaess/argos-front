@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import LogoArgos from "../LogoArgos/LogoArgos";
 
 /*
  * Navbar principal do Argos.
@@ -6,9 +7,7 @@ import { Link } from "react-router";
 export default function Navbar(){
     return (
         <header className="relative mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-7 py-6">
-            <Link to="/" className="font-titulo text-[28px] font-extrabold uppercase tracking-[0.14em] text-bege">
-                Argos<span className="text-salvia">.</span>
-            </Link>
+            <LogoArgos className="text-[28px] text-bege" />
 
             <nav aria-label="Principal" className="flex flex-wrap gap-0.5 text-base font-medium">
                 <Link to="/" className="rounded-[10px] px-3.5 py-2.5 text-bege">Início</Link>
