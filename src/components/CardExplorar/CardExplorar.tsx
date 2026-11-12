@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 /*
     CardExplorar: Atalho da seção "Explore o Argos" (Triagem, Hoje, Guia...).
