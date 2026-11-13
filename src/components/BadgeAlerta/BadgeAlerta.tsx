@@ -18,6 +18,7 @@ interface BadgeAlertaProps {
 
     mostrarNumero?: boolean;
     tamanho?: Tamanho;
+    className?: string;
 }
 
 /*
@@ -79,6 +80,7 @@ export default function BadgeAlerta({
     titulo,
     mostrarNumero = false,
     tamanho = "grande",
+    className = "",
 
 }: BadgeAlertaProps) {
     const { rotulo, classes } = PADRAO[nivel];
@@ -86,7 +88,7 @@ export default function BadgeAlerta({
     const texto = titulo ?? rotulo;
 
     return (
-    <div data-reveal className={`group flex items-center font-semibold ${classes} ${medidas.caixa}`}>
+    <div data-reveal className={`group flex items-center font-semibold ${classes} ${medidas.caixa} ${className}`}>
         {/* stroke="currentColor": o ícone herda a cor do texto */}
         <svg
             viewBox="0 0 24 24"
