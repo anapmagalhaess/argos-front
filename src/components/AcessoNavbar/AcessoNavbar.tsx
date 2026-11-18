@@ -151,7 +151,7 @@ function MenuPerfil({
                 aria-controls={menuId}
                 onClick={() => setAberto((atual) => !atual)}
                 className={variante === "desktop"
-                    ? `relative flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-base font-medium text-bege transition-colors after:absolute after:right-2 after:bottom-0 after:left-2 after:h-0.5 after:rounded-full after:bg-salvia after:transition-transform hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia ${contaAtiva ? "after:scale-x-100" : "after:scale-x-0"}`
+                    ? "relative flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-base font-medium text-bege transition-colors hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia"
                     : `${SECUNDARIO} w-full justify-between ${contaAtiva ? "border-salvia bg-linha/50 shadow-[0_0_0_3px_rgba(125,190,140,.08)]" : ""}`}
             >
                 <span className="flex items-center gap-2.5">
