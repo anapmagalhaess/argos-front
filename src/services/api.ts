@@ -8,6 +8,7 @@ import type {
     Propriedade,
     PropriedadeEntrada,
 } from '../types/api'
+import type { Alerta } from '../types/alerta'
 
 /**
  * Cliente da API Java do Argos. O endereço vem da variável VITE_API_URL (no Vite, só variáveis que
@@ -100,3 +101,6 @@ export const cadastrarPlantio = (propriedadeId: number, dados: PlantioEntrada) =
 
 export const listarPlantios = (propriedadeId: number, sinal?: AbortSignal) =>
     pedir<Plantio[]>(`/propriedades/${propriedadeId}/plantios`, { sinal })
+
+export const listarAlertasDoMunicipio = (municipioId: number, sinal?: AbortSignal) =>
+    pedir<Alerta[]>(`/municipios/${municipioId}/alertas`, { sinal })

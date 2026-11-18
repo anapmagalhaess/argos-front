@@ -1,5 +1,5 @@
 import type { Alerta } from '../types/alerta';
-import { buscar, ErroDeApi } from './api';
+import { ApiError, listarAlertasDoMunicipio } from './api';
 
 /**
  * Busca a lista de alertas meteorológicos e fitossanitários do município do produtor.
@@ -14,12 +14,12 @@ export async function buscarAlertasDoMunicipio(
     sinal?: AbortSignal
 ): Promise<Alerta[]> {
     try {
-        const alertas = await buscar<Alerta[]>(`/municipios/${municipioId}/alertas`, sinal);
+        const alertas = await listarAlertasDoMunicipio(municipioId, sinal);
         return alertas || [];
     } catch (erro) {
         // Se a API retornar 404 (município sem alertas ou rota de apoio em deploy fase 2),
         // trata como ausência de alertas sem derrubar a aplicação
-        if (erro instanceof ErroDeApi && erro.corpo.status === 404) {
+        if (erro instanceof ApiError && erro.status === 404) {
             return [];
         }
         throw erro;

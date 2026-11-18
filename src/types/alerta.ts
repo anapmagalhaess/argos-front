@@ -23,6 +23,9 @@ export interface AlertaResponse {
     dataFim: string
 }
 
+/** Nome curto usado pela camada de serviços da tela Hoje. */
+export type Alerta = AlertaResponse;
+
 /** Nome de cada tipo para mostrar na tela: a tela nunca mostra "CHUVA_FORTE". */
 export const ROTULO_TIPO_ALERTA: Record<TipoAlerta, string> = {
     CHUVA_FORTE: 'Chuva forte',
