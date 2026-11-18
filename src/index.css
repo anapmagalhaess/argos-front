@@ -64,6 +64,17 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: #17110D;
+}
+
 /* Os pinos das camadas surgem um depois do outro quando a câmera pousa na lavoura: crescem a
    partir da ponta de baixo, que é o lugar que eles marcam. */
 .pino {

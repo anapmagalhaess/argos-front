@@ -56,7 +56,7 @@ export default function Entrar() {
     }
 
     return (
-        <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(800px_500px_at_90%_10%,rgba(125,190,140,.09),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_40%,var(--color-fundo)_100%)]">
+        <main className="flex min-h-screen min-h-svh w-full flex-col overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(800px_500px_at_90%_10%,rgba(125,190,140,.09),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_40%,var(--color-fundo)_100%)]">
             <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-32 size-[430px] rounded-full border border-salvia/10 shadow-[0_0_0_24px_rgba(125,190,140,.025),0_0_0_58px_rgba(125,190,140,.02)]" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[8%] top-20 size-52 rounded-full bg-salvia/10 blur-[70px]" />
@@ -72,7 +72,7 @@ export default function Entrar() {
                 </div>
             </section>
 
-            <section className="relative isolate overflow-hidden border-t border-linha bg-card py-16">
+            <section className="relative isolate flex-1 overflow-hidden border-t border-linha bg-card py-16">
                 <div aria-hidden="true" className="pointer-events-none absolute -left-20 top-20 z-0 size-64 rounded-full bg-ambar/[.06] blur-3xl" />
                 <div aria-hidden="true" className="pointer-events-none absolute -right-20 bottom-0 z-0 size-72 rounded-full bg-salvia/[.07] blur-3xl" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[12%] top-16 z-0 hidden size-40 rounded-full border border-ambar/10 shadow-[0_0_0_16px_rgba(217,166,80,.025),0_0_0_36px_rgba(217,166,80,.018)] lg:block" />
