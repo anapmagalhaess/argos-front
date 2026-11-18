@@ -99,10 +99,6 @@ export default function CardRiscoQuebra({ entrada, legenda }: CardRiscoQuebraPro
                     <ResultadoRisco risco={risco} produtividade={produtividade} />
                 )}
             </div>
-
-            <p className="mt-6 border-t border-linha pt-4 text-[15px] text-texto-2">
-                {legenda}. É uma previsão feita com dados de safras passadas, não uma certeza.
-            </p>
         </section>
     );
 }
