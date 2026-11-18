@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useConta } from "../../contexto/conta";
 
 /*
@@ -20,6 +20,10 @@ const SECUNDARIO =
 
 export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps) {
     const { conta, sair } = useConta();
+    const location = useLocation();
+    const currentPath = location.pathname.replace(/\/$/, "") || "/";
+    const contaAtiva = currentPath === "/conta";
+    const hojeAtivo = currentPath === "/hoje";
     const primeiroNome = conta?.produtorNome.split(" ")[0];
 
     if (variante === "desktop") {
@@ -30,7 +34,8 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
                         <Link
                             to="/conta"
                             aria-label={`Minha conta, ${primeiroNome}`}
-                            className="flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-base font-medium text-bege transition-colors duration-150 hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia"
+                            aria-current={contaAtiva ? "page" : undefined}
+                            className={`relative flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-base font-medium text-bege transition-colors duration-150 after:absolute after:right-2 after:bottom-0 after:left-2 after:h-0.5 after:rounded-full after:bg-salvia after:transition-transform hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia ${contaAtiva ? "after:scale-x-100" : "after:scale-x-0"}`}
                         >
                             <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full bg-mata font-titulo text-sm font-bold text-bege">
                                 {primeiroNome?.charAt(0).toUpperCase()}
@@ -40,7 +45,7 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
                         <button type="button" onClick={sair} className="cursor-pointer rounded-[10px] px-2 py-1.5 text-base font-medium text-texto-2 transition-colors duration-150 hover:text-bege focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia">
                             Sair
                         </button>
-                        <Link to="/hoje" className={CTA}>Hoje</Link>
+                        <Link to="/hoje" aria-current={hojeAtivo ? "page" : undefined} className={`${CTA} ${hojeAtivo ? "shadow-[0_0_0_3px_rgba(125,190,140,.18),0_0_24px_rgba(125,190,140,.24)] ring-1 ring-salvia/70" : ""}`}>Hoje</Link>
                     </>
                 ) : (
                     <>
@@ -58,9 +63,9 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
         <div className="flex flex-col gap-2.5">
             {conta ? (
                 <>
-                    <Link to="/conta" onClick={aoNavegar} className={`${SECUNDARIO} w-full`}>Minha conta ({primeiroNome})</Link>
+                    <Link to="/conta" onClick={aoNavegar} aria-current={contaAtiva ? "page" : undefined} className={`${SECUNDARIO} w-full ${contaAtiva ? "border-salvia bg-linha/50 text-bege shadow-[0_0_0_3px_rgba(125,190,140,.08)]" : ""}`}>Minha conta ({primeiroNome})</Link>
                     <button type="button" onClick={() => { sair(); aoNavegar?.(); }} className={`${SECUNDARIO} w-full`}>Sair</button>
-                    <Link to="/hoje" onClick={aoNavegar} className={`${CTA} w-full`}>Hoje</Link>
+                    <Link to="/hoje" onClick={aoNavegar} aria-current={hojeAtivo ? "page" : undefined} className={`${CTA} w-full ${hojeAtivo ? "shadow-[0_0_0_3px_rgba(125,190,140,.18),0_0_24px_rgba(125,190,140,.24)] ring-1 ring-salvia/70" : ""}`}>Hoje</Link>
                 </>
             ) : (
                 <>
