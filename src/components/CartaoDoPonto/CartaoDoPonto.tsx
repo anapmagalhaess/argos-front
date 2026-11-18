@@ -10,7 +10,7 @@ interface CartaoDoPontoProps {
 export default function CartaoDoPonto({ itens }: CartaoDoPontoProps) {
     return (
         <div className="mb-3 flex flex-col items-center">
-            <dl className="flex divide-x divide-[#FBF8F1]/20 bg-[#1A241C]/95 text-[#FBF8F1] shadow-xl">
+            <dl className="flex divide-x divide-[#E6DAC6]/20 bg-[#1F1814]/95 text-[#E6DAC6] shadow-xl">
                 {itens.map((item) => (
                     <div key={item.rotulo} className="px-4 py-3 text-center sm:px-5">
                         <dt className="font-sans text-[11px] font-semibold tracking-[0.2em] uppercase opacity-80">
@@ -22,7 +22,7 @@ export default function CartaoDoPonto({ itens }: CartaoDoPontoProps) {
                     </div>
                 ))}
             </dl>
-            <span aria-hidden="true" className="-mt-1.5 size-3 rotate-45 bg-[#1A241C]/95" />
+            <span aria-hidden="true" className="-mt-1.5 size-3 rotate-45 bg-[#1F1814]/95" />
         </div>
     )
 }

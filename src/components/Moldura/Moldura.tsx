@@ -14,7 +14,7 @@ function Cantoneira({ className }: { className: string }) {
  */
 export default function Moldura() {
     return (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-3 text-[#FBF8F1]/45 md:inset-5">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-3 text-[#E6DAC6]/45 md:inset-5">
             <div className="absolute inset-x-10 top-0 border-t border-current" />
             <div className="absolute inset-x-10 bottom-0 border-b border-current" />
             <div className="absolute inset-y-10 left-0 border-l border-current" />

@@ -12,7 +12,7 @@ interface CartaoPragaProps {
 type Vista = 'bicho' | 'estrago'
 const VISTAS: Vista[] = ['bicho', 'estrago']
 
-const ROTULO = 'font-condensed text-sm font-semibold tracking-[0.14em] text-[#1F6B3A] uppercase'
+const ROTULO = 'font-condensed text-sm font-semibold tracking-[0.14em] text-[#2E5A43] uppercase'
 
 /**
  * Cartão de uma praga do catálogo. Dois botões em cima da foto trocam a vista: "O bicho" mostra
@@ -25,15 +25,15 @@ export default function CartaoPraga({ praga }: CartaoPragaProps) {
     const fotos: Record<Vista, string | undefined> = { bicho: praga.foto, estrago: praga.fotoDoEstrago }
 
     const botao = (qual: Vista) =>
-        `min-h-11 flex-1 cursor-pointer rounded-full px-4 text-base font-bold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#F2B705] ${
-            vista === qual ? 'bg-[#F2B705] text-[#1E1E1E]' : 'text-[#FBF8F1] hover:bg-white/15'
+        `min-h-11 flex-1 cursor-pointer rounded-full px-4 text-base font-bold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#7DBE8C] ${
+            vista === qual ? 'bg-[#7DBE8C] text-[#17110D]' : 'text-[#E6DAC6] hover:bg-white/15'
         }`
 
     return (
-        <article className="group flex h-full flex-col overflow-hidden rounded-3xl bg-[#FBF8F1] text-[#1E1E1E] shadow-[0_10px_30px_rgb(0_0_0/0.18)] transition-transform duration-500 hover:-translate-y-1.5">
+        <article className="group flex h-full flex-col overflow-hidden rounded-3xl bg-[#E6DAC6] text-[#17110D] shadow-[0_10px_30px_rgb(0_0_0/0.18)] transition-transform duration-500 hover:-translate-y-1.5">
             <div
                 // Sem foto, o fundo puxa um pouco da cor do próprio bicho.
-                style={{ backgroundColor: `color-mix(in srgb, ${praga.cores.corpo} 22%, #EFEADB)` }}
+                style={{ backgroundColor: `color-mix(in srgb, ${praga.cores.corpo} 22%, #E6DAC6)` }}
                 className="relative h-60 overflow-hidden"
             >
                 {/* As duas fotos ficam uma em cima da outra: a da vista escolhida aparece, a outra some. */}
@@ -62,7 +62,7 @@ export default function CartaoPraga({ praga }: CartaoPragaProps) {
                     ),
                 )}
 
-                <p className="absolute top-3 left-3 rounded-full bg-[#14251A] px-3 py-1 font-condensed text-sm font-semibold tracking-[0.14em] text-[#FBF8F1] uppercase">
+                <p className="absolute top-3 left-3 rounded-full bg-[#17110D] px-3 py-1 font-condensed text-sm font-semibold tracking-[0.14em] text-[#E6DAC6] uppercase">
                     {praga.tipo}
                 </p>
                 <p className="absolute top-3 right-3 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold">
@@ -73,7 +73,7 @@ export default function CartaoPraga({ praga }: CartaoPragaProps) {
                 <div
                     role="group"
                     aria-label={`O que ver de ${praga.nome}`}
-                    className="absolute inset-x-3 bottom-3 flex gap-1 rounded-full bg-[#14251A]/85 p-1 backdrop-blur-sm"
+                    className="absolute inset-x-3 bottom-3 flex gap-1 rounded-full bg-[#17110D]/85 p-1 backdrop-blur-sm"
                 >
                     <button
                         type="button"
@@ -96,13 +96,13 @@ export default function CartaoPraga({ praga }: CartaoPragaProps) {
 
             <div className="flex flex-1 flex-col p-5">
                 <h3 className="font-display text-2xl leading-tight font-bold">{praga.nome}</h3>
-                <p className="mt-0.5 text-base text-[#1E1E1E]/70 italic">{praga.nomeCientifico}</p>
+                <p className="mt-0.5 text-base text-[#17110D]/70 italic">{praga.nomeCientifico}</p>
 
                 <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Lavouras em que aparece">
                     {lavouras.map((cultura) => (
                         <li
                             key={cultura.slug}
-                            className="flex items-center gap-1.5 rounded-full border border-[#1F6B3A]/25 py-1 pr-3 pl-2 text-sm font-semibold text-[#1F6B3A]"
+                            className="flex items-center gap-1.5 rounded-full border border-[#2E5A43]/25 py-1 pr-3 pl-2 text-sm font-semibold text-[#2E5A43]"
                         >
                             <IconeCultura slug={cultura.slug} className="size-4" />
                             {cultura.nome}
@@ -116,7 +116,7 @@ export default function CartaoPraga({ praga }: CartaoPragaProps) {
                         <>
                             <p className={ROTULO}>Como é</p>
                             <p className="mt-1 text-lg leading-snug">{praga.aparencia}</p>
-                            <p className="mt-2 text-base text-[#1E1E1E]/75">Tamanho parecido com {praga.comparacao}.</p>
+                            <p className="mt-2 text-base text-[#17110D]/75">Tamanho parecido com {praga.comparacao}.</p>
                         </>
                     ) : (
                         <>

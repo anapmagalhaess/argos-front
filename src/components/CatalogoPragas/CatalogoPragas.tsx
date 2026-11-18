@@ -25,15 +25,15 @@ export default function CatalogoPragas({ lavouraFixa, escuro = false }: Catalogo
     // Só aparecem os grupos que têm alguma praga na lavoura escolhida.
     const grupos = GRUPOS_DE_PRAGAS.filter((umGrupo) => daLavoura.some((praga) => praga.grupo === umGrupo.slug))
 
-    const fraco = escuro ? 'text-[#FBF8F1]/75' : 'text-[#1E1E1E]/75'
-    const pergunta = `font-condensed text-lg font-semibold tracking-[0.14em] uppercase ${escuro ? 'text-[#F2B705]' : 'text-[#1F6B3A]'}`
+    const fraco = escuro ? 'text-[#E6DAC6]/75' : 'text-[#17110D]/75'
+    const pergunta = `font-condensed text-lg font-semibold tracking-[0.14em] uppercase ${escuro ? 'text-[#7DBE8C]' : 'text-[#2E5A43]'}`
     const botao = (ativo: boolean) =>
-        `flex min-h-12 cursor-pointer items-center gap-2 rounded-full border-2 px-5 text-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#F2B705] ${
+        `flex min-h-12 cursor-pointer items-center gap-2 rounded-full border-2 px-5 text-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#7DBE8C] ${
             ativo
-                ? 'border-[#F2B705] bg-[#F2B705] text-[#1E1E1E]'
+                ? 'border-[#7DBE8C] bg-[#7DBE8C] text-[#17110D]'
                 : escuro
-                  ? 'border-[#FBF8F1]/35 text-[#FBF8F1] hover:border-[#FBF8F1]'
-                  : 'border-[#1F6B3A]/30 text-[#1F6B3A] hover:border-[#1F6B3A]'
+                  ? 'border-[#E6DAC6]/35 text-[#E6DAC6] hover:border-[#E6DAC6]'
+                  : 'border-[#2E5A43]/30 text-[#2E5A43] hover:border-[#2E5A43]'
         }`
 
     const escolherLavoura = (slug: string | null) => {

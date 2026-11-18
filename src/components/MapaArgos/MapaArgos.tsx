@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Map as MapaDeSatelite } from 'maplibre-gl'
 import type { ExpressionSpecification, RasterDEMSourceSpecification, StyleSpecification } from 'maplibre-gl'
@@ -58,7 +58,7 @@ const MUNDO: [number, number][] = [
     [-180, 85],
     [-180, -85],
 ]
-const ESPACO = '#01060C'
+const ESPACO = '#17110D'
 
 const ESTILO: StyleSpecification = {
     version: 8,
@@ -116,7 +116,7 @@ const ESTILO: StyleSpecification = {
             type: 'hillshade',
             source: 'sombra',
             minzoom: 8,
-            paint: { 'hillshade-exaggeration': 0.4, 'hillshade-shadow-color': '#03110A' },
+            paint: { 'hillshade-exaggeration': 0.4, 'hillshade-shadow-color': '#17110D' },
         },
         {
             id: 'vizinhos',
@@ -132,7 +132,7 @@ const ESTILO: StyleSpecification = {
             type: 'line',
             source: 'brasil',
             paint: {
-                'line-color': '#FBF8F1',
+                'line-color': '#E6DAC6',
                 'line-width': 1.3,
                 'line-opacity': ['interpolate', ['linear'], ['zoom'], 4.5, 0.8, 8, 0],
             },
@@ -190,18 +190,21 @@ function coresDasCurvas(altitude: number, paleta: PaletaDeCurvas): ExpressionSpe
 }
 
 /** Na chegada, a câmera começa longe, com o planeta inteiro, e desce até o Brasil. */
-const SEGUNDOS_DA_CHEGADA = 4.5
+const SEGUNDOS_DA_CHEGADA = 3.2
 const ZOOM_DA_CHEGADA = 1.6
-const SEGUNDOS_DO_VOO = 7
-const SEGUNDOS_DA_VOLTA = 3.5
-const SEGUNDOS_ENTRE_CAMADAS = 2.6
+const SEGUNDOS_DO_VOO = 4.2
+const SEGUNDOS_DA_VOLTA = 2.4
+const SEGUNDOS_ENTRE_CAMADAS = 1.5
 const ESPERA_PELAS_IMAGENS = 14000
 
-/** Margens do Brasil inteiro: no celular, entre o texto de cima e o seletor; no desktop, no meio da tela. */
+/**
+ * Margens do Brasil inteiro. No celular ele fica entre o texto de cima e o seletor. Em telas
+ * largas o texto e o seletor ficam numa coluna à esquerda, e o Brasil ocupa quase toda a altura.
+ */
 function margensDoBrasil(largura: number) {
     return largura < 768
         ? { top: 230, bottom: 240, left: 8, right: 8 }
-        : { top: 70, bottom: 250, left: Math.round(largura * 0.2), right: Math.round(largura * 0.2) }
+        : { top: 36, bottom: 36, left: Math.round(largura * 0.3), right: Math.round(largura * 0.06) }
 }
 /** O nome de cada camada, para quem usa leitor de tela. */
 const NOMES_DAS_CAMADAS: Record<Camada, string> = {
@@ -233,11 +236,13 @@ const metrosPorPixel = (latitude: number, zoom: number) =>
 /** No celular a roda de pinos encolhe, para caber na tela. */
 const escalaDosPinos = (largura: number) => (largura < 768 ? 0.4 : 1)
 
-/** Com a lavoura aberta, o painel ocupa a parte de baixo: o lugar fica no meio do que sobra. */
-const margensDaLavoura = (largura: number) =>
-    // No celular o nome da lavoura e o botão de voltar ocupam o alto: a margem de cima é maior, para
-    // os pinos não baterem neles.
-    largura < 768 ? { top: 250, left: 0, right: 0, bottom: 360 } : { top: 60, left: 0, right: 0, bottom: 300 }
+/**
+ * Com a lavoura aberta, o painel ocupa a parte de baixo e o nome dela o alto: o lugar fica um pouco
+ * acima do meio da tela. É um deslocamento em pixels (x, y) que vale só para aquele movimento da
+ * câmera. Não se usa `padding` aqui de propósito: a margem ficaria guardada no mapa e, na volta,
+ * se somaria às margens do Brasil, deixando o país pequeno.
+ */
+const deslocamentoDaLavoura = (largura: number): [number, number] => (largura < 768 ? [0, -55] : [0, -85])
 
 /** Movimento que sai devagar, acelera no meio e chega devagar. */
 const suave = (tempo: number) => (tempo < 0.5 ? 4 * tempo ** 3 : 1 - (-2 * tempo + 2) ** 3 / 2)
@@ -247,7 +252,7 @@ const semMovimento = () => window.matchMedia('(prefers-reduced-motion: reduce)')
 /**
  * O mapa do Argos: o Brasil em imagem real de satélite, com o mar em volta e um marcador para cada
  * lavoura. Ao abrir uma lavoura, a câmera voa até ela, o terreno ganha relevo em 3D e cada camada
- * (clima, ar, umidade, solo) muda o ângulo e as cores.
+ * (clima, ar, umidade, solo) muda o ângulo e as cores. O mapa pode ser arrastado com o mouse.
  */
 export default function MapaArgos({
     culturas,
@@ -277,19 +282,24 @@ export default function MapaArgos({
     useEffect(() => {
         camadaRef.current = camada
     }, [camada])
-    const [posicoes, setPosicoes] = useState<Record<string, { x: number; y: number }>>({})
-    // Altura (zoom) e inclinação da câmera: dão o tamanho da área plantada na tela.
-    const [camera, setCamera] = useState({ zoom: 0, inclinacao: 0 })
-    // Os pinos das camadas, em volta da lavoura aberta.
-    const [pinos, setPinos] = useState<Partial<Record<Camada, { x: number; y: number }>>>({})
     // A lavoura em que a câmera já pousou: os pinos só aparecem depois do voo.
     const [pousada, setPousada] = useState<string | null>(null)
+    // A pessoa arrastou ou aproximou o mapa com a mão: aparece o botão de recentrar.
+    const [fora, setFora] = useState(false)
+
+    // Os marcadores, os pinos e a área plantada são elementos por cima do mapa. A cada quadro do
+    // movimento da câmera a posição deles é escrita direto no elemento (pelas refs abaixo), sem
+    // passar pelo estado do React: redesenhar o componente inteiro 60 vezes por segundo travava o voo.
+    const marcadoresRef = useRef<Record<string, HTMLDivElement | null>>({})
+    const pinosRef = useRef<Partial<Record<Camada, HTMLDivElement | null>>>({})
+    const zonaRef = useRef<HTMLDivElement>(null)
     const abertaRef = useRef(aberta)
     const posicionarRef = useRef<() => void>(() => {})
-    useEffect(() => {
+    // Quando um marcador ou pino entra na tela (ou a lavoura muda), ele já nasce no lugar certo.
+    useLayoutEffect(() => {
         abertaRef.current = aberta
         posicionarRef.current()
-    }, [aberta])
+    }, [aberta, chegou, pousada, zona])
 
     // Cria o mapa uma vez, com o Brasil inteiro na tela.
     useEffect(() => {
@@ -300,39 +310,63 @@ export default function MapaArgos({
             style: ESTILO,
             bounds: LIMITES_DO_BRASIL,
             fitBoundsOptions: { padding: margensDoBrasil(area.clientWidth) },
-            // É uma animação guiada, não um mapa para arrastar: a rolagem da página continua livre.
-            interactive: false,
+            // O mapa pode ser arrastado com o mouse. A rodinha continua rolando a página: para
+            // aproximar, é Ctrl + rodinha (ou dois dedos, no celular), e o mapa avisa isso sozinho.
+            cooperativeGestures: true,
+            locale: {
+                'CooperativeGesturesHandler.WindowsHelpText': 'Segure Ctrl e gire a rodinha para aproximar o mapa',
+                'CooperativeGesturesHandler.MacHelpText': 'Segure ⌘ e role para aproximar o mapa',
+                'CooperativeGesturesHandler.MobileHelpText': 'Use dois dedos para mover o mapa',
+            },
+            // Girar e inclinar ficam por conta das camadas; as setas do teclado trocam de lavoura.
+            dragRotate: false,
+            touchPitch: false,
+            keyboard: false,
+            minZoom: 1.2,
+            maxZoom: 14.5,
+            // Telas de celular têm muitos pontos por polegada: desenhar tudo isso deixa o voo lento.
+            pixelRatio: Math.min(window.devicePixelRatio, 1.5),
             attributionControl: false,
             maxPitch: 70,
         })
         mapaRef.current = mapa
 
-        // Os marcadores são botões por cima do mapa: a cada movimento da câmera, eles acompanham.
         const posicionar = () => {
-            const novas: Record<string, { x: number; y: number }> = {}
             for (const cultura of culturas) {
+                const marcador = marcadoresRef.current[cultura.slug]
+                if (!marcador) continue
                 const ponto = mapa.project([cultura.longitude, cultura.latitude])
-                novas[cultura.slug] = { x: ponto.x, y: ponto.y }
+                marcador.style.left = `${ponto.x}px`
+                marcador.style.top = `${ponto.y}px`
             }
-            setPosicoes(novas)
-            setCamera({ zoom: mapa.getZoom(), inclinacao: mapa.getPitch() })
 
             const lavoura = abertaRef.current
             if (!lavoura) return
             const centro = mapa.project([lavoura.longitude, lavoura.latitude])
             const escala = escalaDosPinos(mapa.getContainer().clientWidth)
-            const novos: Partial<Record<Camada, { x: number; y: number }>> = {}
             for (const umaCamada of CAMADAS) {
-                novos[umaCamada] = {
-                    x: centro.x + PINOS[umaCamada].x * escala,
-                    y: centro.y + PINOS[umaCamada].y * escala,
-                }
+                const pino = pinosRef.current[umaCamada]
+                if (!pino) continue
+                pino.style.left = `${centro.x + PINOS[umaCamada].x * escala}px`
+                pino.style.top = `${centro.y + PINOS[umaCamada].y * escala}px`
             }
-            setPinos(novos)
+
+            const area = zonaRef.current
+            if (!area) return
+            const raio = RAIO_DA_AREA_PLANTADA / metrosPorPixel(lavoura.latitude, mapa.getZoom())
+            area.style.left = `${centro.x}px`
+            area.style.top = `${centro.y}px`
+            area.style.width = `${raio * 2}px`
+            // Com a câmera inclinada, um círculo no chão aparece achatado na tela.
+            area.style.height = `${raio * 2 * Math.cos((mapa.getPitch() * Math.PI) / 180)}px`
         }
         posicionarRef.current = posicionar
         mapa.on('move', posicionar)
         mapa.on('resize', posicionar)
+        // Movimento que veio da mão da pessoa (arrastar, aproximar) traz o evento original junto.
+        mapa.on('moveend', (evento) => {
+            if (evento.originalEvent) setFora(true)
+        })
 
         // A chegada: o mapa nasce já enquadrado no Brasil, e a câmera recua até mostrar o planeta.
         // Quando as imagens carregam, ela desce de volta até o país (o efeito logo abaixo cuida disso).
@@ -374,6 +408,7 @@ export default function MapaArgos({
                 if (camadaRef.current === destino) return
                 mapa.easeTo({
                     ...CAMERAS[camadaRef.current],
+                    offset: deslocamentoDaLavoura(mapa.getContainer().clientWidth),
                     duration: parado ? 0 : SEGUNDOS_ENTRE_CAMADAS * 1000,
                     easing: suave,
                     essential: true,
@@ -385,7 +420,7 @@ export default function MapaArgos({
             mapa.flyTo({
                 center: [aberta.longitude, aberta.latitude],
                 ...CAMERAS[destino],
-                padding: margensDaLavoura(mapa.getContainer().clientWidth),
+                offset: deslocamentoDaLavoura(mapa.getContainer().clientWidth),
                 duration: parado ? 0 : SEGUNDOS_DO_VOO * 1000,
                 curve: 1.25,
                 essential: true,
@@ -422,14 +457,16 @@ export default function MapaArgos({
         mapa.setPaintProperty('sombra', 'hillshade-exaggeration', mostrar ? 0.65 : 0.4)
     }, [aberta, curvas, pronto])
 
-    // Troca de camada: a câmera continua no centro da lavoura e muda de altura e de ângulo.
+    // Troca de camada: a câmera volta ao centro da lavoura e muda de altura e de ângulo.
     useEffect(() => {
         const mapa = mapaRef.current
         if (!mapa || !pronto) return
         // Na abertura quem move a câmera é o voo; aqui é só a troca entre camadas, com a lavoura já aberta.
         if (!aberta || voandoRef.current) return
         mapa.easeTo({
+            center: [aberta.longitude, aberta.latitude],
             ...CAMERAS[camada],
+            offset: deslocamentoDaLavoura(mapa.getContainer().clientWidth),
             duration: semMovimento() ? 0 : SEGUNDOS_ENTRE_CAMADAS * 1000,
             easing: suave,
             essential: true,
@@ -450,6 +487,30 @@ export default function MapaArgos({
         }
     }, [aberta, pronto])
 
+    /** Leva a câmera de volta ao enquadramento certo, depois que a pessoa arrastou o mapa. */
+    const recentrar = () => {
+        const mapa = mapaRef.current
+        if (!mapa) return
+        setFora(false)
+        const duracao = semMovimento() ? 0 : 1200
+        if (aberta) {
+            mapa.easeTo({
+                center: [aberta.longitude, aberta.latitude],
+                ...CAMERAS[camada],
+                offset: deslocamentoDaLavoura(mapa.getContainer().clientWidth),
+                duration: duracao,
+                easing: suave,
+                essential: true,
+            })
+            return
+        }
+        mapa.fitBounds(LIMITES_DO_BRASIL, {
+            padding: margensDoBrasil(mapa.getContainer().clientWidth),
+            duration: duracao,
+            essential: true,
+        })
+    }
+
     return (
         <div className="absolute inset-0">
             {/* A biblioteca de mapas troca a posição do próprio contêiner para `relative`; por isso ele
@@ -457,10 +518,15 @@ export default function MapaArgos({
             <div
                 className={`absolute inset-0 transition-opacity duration-1000 ${pronto ? 'opacity-100' : 'opacity-0'}`}
             >
-                <div ref={areaRef} role="img" aria-label="Mapa do Brasil em imagem de satélite" className="size-full" />
+                <div
+                    ref={areaRef}
+                    role="img"
+                    aria-label="Mapa do Brasil em imagem de satélite"
+                    className="size-full cursor-grab active:cursor-grabbing"
+                />
             </div>
 
-            {/* Filtro de cor: multiplica a imagem sem cor pelo azul da umidade ou pelo verde do solo. */}
+            {/* Filtro de cor: uma névoa por cima da imagem, na cor da leitura do ar. */}
             <div
                 aria-hidden="true"
                 style={{ backgroundColor: filtro?.cor ?? 'transparent', opacity: filtro ? filtro.forca : 0 }}
@@ -477,95 +543,98 @@ export default function MapaArgos({
                 no modo "color": troca a cor do terreno (o verde vira azul) e deixa passar o claro e o
                 escuro, então as curvas e o relevo continuam aparecendo dentro dela. A borda é esfumada.
                 Ela surge depois que a câmera chega, crescendo a partir do centro da lavoura. */}
-            {aberta &&
-                posicoes[aberta.slug] &&
-                (() => {
-                    const raio = RAIO_DA_AREA_PLANTADA / metrosPorPixel(aberta.latitude, camera.zoom)
-                    // Com a câmera inclinada, um círculo no chão aparece achatado na tela.
-                    const achatado = Math.cos((camera.inclinacao * Math.PI) / 180)
-                    const visivel = zona !== null && pousada === aberta.slug
-                    return (
-                        <div
-                            aria-hidden="true"
-                            style={{
-                                left: posicoes[aberta.slug].x,
-                                top: posicoes[aberta.slug].y,
-                                width: raio * 2,
-                                height: raio * 2 * achatado,
-                                background: `radial-gradient(closest-side, ${zona ?? 'transparent'} 0%, ${zona ?? 'transparent'} 62%, transparent 100%)`,
-                            }}
-                            className={`pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 mix-blend-color transition-[opacity,scale] duration-[1600ms] ease-out ${
-                                visivel ? 'scale-100 opacity-100 delay-700' : 'scale-50 opacity-0'
-                            }`}
-                        />
-                    )
-                })()}
+            {aberta && (
+                <div
+                    ref={zonaRef}
+                    aria-hidden="true"
+                    style={{
+                        background: `radial-gradient(closest-side, ${zona ?? 'transparent'} 0%, ${zona ?? 'transparent'} 62%, transparent 100%)`,
+                    }}
+                    className={`pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 mix-blend-color transition-[opacity,scale] duration-[900ms] ease-out ${
+                        zona !== null && pousada === aberta.slug ? 'scale-100 opacity-100 delay-200' : 'scale-50 opacity-0'
+                    }`}
+                />
+            )}
 
+            {/* Os marcadores das lavouras no mapa do Brasil. Passar o mouse (ou o foco do teclado)
+                destaca a lavoura; um clique já abre. */}
             {chegou &&
                 culturas.map((cultura) => {
-                    const posicao = posicoes[cultura.slug]
-                    if (!posicao) return null
                     const ativa = cultura.slug === selecionada
                     // Com uma lavoura aberta, os marcadores do Brasil saem e entram os pinos das camadas.
                     const escondida = aberta !== null
                     return (
                         <div
                             key={cultura.slug}
-                            style={{ left: posicao.x, top: posicao.y }}
+                            ref={(elemento) => {
+                                marcadoresRef.current[cultura.slug] = elemento
+                            }}
                             className={`absolute flex -translate-x-1/2 -translate-y-full flex-col items-center transition-opacity duration-500 ${
                                 ativa ? 'z-10' : ''
                             } ${escondida ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
                         >
                             <button
                                 type="button"
-                                aria-pressed={ativa}
-                                aria-label={`${cultura.nome}: ${cultura.municipio}, ${cultura.uf}`}
+                                aria-label={`Abrir ${cultura.nome}: ${cultura.municipio}, ${cultura.uf}`}
                                 tabIndex={escondida ? -1 : 0}
-                                onClick={() => (ativa ? onAbrir(cultura.slug) : onSelecionar(cultura.slug))}
+                                onMouseEnter={() => onSelecionar(cultura.slug)}
+                                onFocus={() => onSelecionar(cultura.slug)}
+                                onClick={() => onAbrir(cultura.slug)}
                                 className="group flex cursor-pointer flex-col items-center focus-visible:outline-none"
                             >
                                 {/* Marcador: o círculo com o ícone, a ponta e o ponto exato do lugar. O círculo
                                     se afasta um pouco para o lado, para dois lugares vizinhos (Sapezal e Sorriso)
                                     não ficarem um em cima do outro; o ponto embaixo não sai do lugar. */}
                                 <span
-                                    className={`flex flex-col items-center ${
+                                    className={`relative flex flex-col items-center ${
                                         cultura.ladoDaEtiqueta === 'esquerda' ? '-translate-x-2.5' : 'translate-x-2.5'
                                     }`}
                                 >
+                                    {/* O nome da lavoura em destaque, em cima do marcador. */}
                                     <span
-                                        className={`flex size-11 items-center justify-center rounded-full shadow-lg transition-transform duration-300 group-hover:scale-110 group-focus-visible:ring-4 group-focus-visible:ring-[#F2B705] ${
-                                            ativa ? 'scale-110 bg-[#F2B705] text-[#1E1E1E]' : 'bg-[#FBF8F1] text-[#1F3D2B]'
+                                        aria-hidden="true"
+                                        className={`absolute bottom-full mb-2 rounded-full bg-[#17110D]/90 px-3 py-1 text-sm font-semibold whitespace-nowrap text-[#E6DAC6] transition-[opacity,translate] duration-300 ${
+                                            ativa ? 'opacity-100' : 'translate-y-1 opacity-0'
+                                        }`}
+                                    >
+                                        {cultura.nome}
+                                    </span>
+                                    <span
+                                        className={`flex size-12 items-center justify-center rounded-full shadow-lg transition-[scale,background-color,color] duration-300 group-hover:scale-115 group-focus-visible:ring-4 group-focus-visible:ring-[#7DBE8C] group-active:scale-95 ${
+                                            ativa ? 'scale-115 bg-[#7DBE8C] text-[#17110D]' : 'bg-[#E6DAC6] text-[#2E5A43]'
                                         }`}
                                     >
                                         <IconeCultura slug={cultura.slug} className="size-6" />
                                     </span>
                                     <span
                                         aria-hidden="true"
-                                        className={`-mt-1.5 size-3 rotate-45 ${ativa ? 'bg-[#F2B705]' : 'bg-[#FBF8F1]'}`}
+                                        className={`-mt-1.5 size-3 rotate-45 transition-colors duration-300 ${ativa ? 'bg-[#7DBE8C]' : 'bg-[#E6DAC6]'}`}
                                     />
                                 </span>
                                 <span
                                     aria-hidden="true"
                                     className={`mt-1.5 size-2 rounded-full ${
-                                        ativa ? 'bg-[#F2B705] motion-safe:animate-ping' : 'bg-[#FBF8F1]'
+                                        ativa ? 'bg-[#7DBE8C] motion-safe:animate-ping' : 'bg-[#E6DAC6]'
                                     }`}
                                 />
                             </button>
                         </div>
                     )
                 })}
+
             {/* Os pinos das camadas, em volta da lavoura aberta: brancos, com um ícone de traço fino.
-                O da camada escolhida fica no centro, com o cartão em cima. */}
+                O da camada escolhida mostra o cartão em cima. */}
             {aberta &&
                 pousada === aberta.slug &&
                 CAMADAS.map((umaCamada, ordem) => {
-                    const posicao = pinos[umaCamada]
-                    if (!posicao) return null
                     const ativa = umaCamada === camada
                     return (
                         <div
                             key={umaCamada}
-                            style={{ left: posicao.x, top: posicao.y, animationDelay: `${ordem * 90}ms` }}
+                            ref={(elemento) => {
+                                pinosRef.current[umaCamada] = elemento
+                            }}
+                            style={{ animationDelay: `${ordem * 70}ms` }}
                             // Os pinos ficam por cima das nuvens e do escurecido da borda, que são desenhados depois do mapa.
                             className={`pino absolute flex -translate-x-1/2 -translate-y-full flex-col items-center ${ativa ? 'z-[11]' : 'z-10'}`}
                         >
@@ -581,13 +650,16 @@ export default function MapaArgos({
                                 className="group flex cursor-pointer flex-col items-center focus-visible:outline-none"
                             >
                                 <span
-                                    className={`flex size-14 items-center justify-center rounded-full bg-white text-[#3D463F] shadow-[0_6px_18px_rgb(0_0_0/0.35)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:ring-4 group-focus-visible:ring-[#F2B705] ${
-                                        ativa ? 'scale-110' : ''
+                                    className={`flex size-14 items-center justify-center rounded-full shadow-[0_6px_18px_rgb(0_0_0/0.35)] transition-[scale,background-color] duration-300 group-hover:scale-110 group-focus-visible:ring-4 group-focus-visible:ring-[#7DBE8C] group-active:scale-95 ${
+                                        ativa ? 'scale-110 bg-[#7DBE8C] text-[#17110D]' : 'bg-white text-[#17110D]'
                                     }`}
                                 >
                                     <IconeCamada camada={umaCamada} slugDaCultura={aberta.slug} className="size-7" />
                                 </span>
-                                <span aria-hidden="true" className="-mt-2 size-3.5 rotate-45 rounded-[2px] bg-white" />
+                                <span
+                                    aria-hidden="true"
+                                    className={`-mt-2 size-3.5 rotate-45 rounded-[2px] transition-colors duration-300 ${ativa ? 'bg-[#7DBE8C]' : 'bg-white'}`}
+                                />
                                 <span
                                     aria-hidden="true"
                                     className={`mt-2 size-2.5 rounded-full bg-white shadow ${
@@ -598,6 +670,17 @@ export default function MapaArgos({
                         </div>
                     )
                 })}
+
+            {/* Aparece quando a pessoa arrasta o mapa para longe: um clique devolve o enquadramento. */}
+            {fora && chegou && (
+                <button
+                    type="button"
+                    onClick={recentrar}
+                    className="entrada absolute top-24 right-6 z-20 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full bg-[#17110D]/85 px-5 text-base font-semibold text-[#E6DAC6] backdrop-blur-sm transition-colors hover:bg-[#17110D] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#7DBE8C] md:top-28 md:right-16"
+                >
+                    <span aria-hidden="true">◎</span> Recentrar o mapa
+                </button>
+            )}
         </div>
     )
 }
