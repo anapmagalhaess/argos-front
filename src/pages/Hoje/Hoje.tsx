@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { Link } from "react-router";
 import BadgeAlerta from "../../components/BadgeAlerta/BadgeAlerta";
+import CardRiscoQuebra from "../../components/CardRiscoQuebra/CardRiscoQuebra";
 import { AvisoDeTela } from "../../components/CampoForm/CampoForm";
 import EstadoVazio from "../../components/EstadoVazio/EstadoVazio";
 import Footer from "../../components/Footer/Footer";
@@ -15,16 +16,29 @@ import { listarPlantios } from "../../services/api";
 import { ROTULO_TIPO_ALERTA } from "../../types/alerta";
 import type { Alerta } from "../../types/alerta";
 import type { Plantio } from "../../types/plantio";
+import type { EntradaPredicao } from "../../types/predicao";
 import { diasAte, formatarData } from "../../utils/datas";
 
-type Aba = "visao" | "plantios" | "avisos" | "previsoes";
+type Aba = "visao" | "plantios" | "avisos" | "previsoes" | "risco";
 
 const ABAS: { id: Aba; rotulo: string; simbolo: string }[] = [
     { id: "visao", rotulo: "Visão geral", simbolo: "◉" },
     { id: "plantios", rotulo: "Plantios", simbolo: "⌂" },
     { id: "avisos", rotulo: "Avisos", simbolo: "!" },
     { id: "previsoes", rotulo: "Previsões", simbolo: "↗" },
+    { id: "risco", rotulo: "Risco de quebra", simbolo: "◇" },
 ];
+
+const ENTRADA_RISCO_ARACI_2023: EntradaPredicao = {
+    chuva_total_mm: 482.2,
+    temp_media: 25.67,
+    temp_max_media: 31.42,
+    dias_acima_35: 48,
+    maior_seq_seca: 26,
+    oni: 0.81,
+    regiao_sul: 0,
+    media_5a: 669.6,
+};
 
 // Níveis 1 a 4 (cor + número + palavra, nunca só cor)
 const NIVEL: Record<number, { palavra: string; cor: string }> = {
@@ -312,6 +326,13 @@ export default function Hoje() {
                                             A estimativa de risco e produtividade por inteligência artificial é opcional no MVP e depende da API de demonstração. Esta aba mostra as datas de colheita cadastradas.
                                         </p>
                                     </div>
+                                )}
+
+                                {aba === "risco" && (
+                                    <CardRiscoQuebra
+                                        entrada={ENTRADA_RISCO_ARACI_2023}
+                                        legenda="Clima de 2023 em Araci (BA)"
+                                    />
                                 )}
                             </div>
                         </div>

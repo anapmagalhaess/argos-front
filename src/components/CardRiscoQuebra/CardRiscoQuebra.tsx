@@ -12,7 +12,7 @@ import type { EntradaPredicao, NivelRisco, RespostaProdutividade, RespostaRiscoQ
 interface CardRiscoQuebraProps {
     /** Clima da safra que vai para os modelos (uma linha do dataset_argos.csv). */
     entrada: EntradaPredicao;
-    /** De onde vieram os números, para o produtor saber o que está vendo. Ex.: "Clima de 2012 em Petrolina". */
+    /** De onde vieram os números, para o produtor saber o que está vendo. Ex.: "Clima de 2023 em Araci (BA)". */
     legenda: string;
 }
 
