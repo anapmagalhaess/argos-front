@@ -49,7 +49,13 @@ export default function Hoje() {
                 <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
                     <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Hoje</p>
                     <h1 className="font-titulo text-[clamp(40px,5.4vw,72px)] leading-none font-extrabold uppercase">
-                        {sessao ? `${saudacaoPorHorario(horaAtual)}, ${sessao.produtorNome}.` : "Sua roça, hoje."}
+                        {sessao ? (
+                            <>
+                                {saudacaoPorHorario(horaAtual)},
+                                <br />
+                                <span className="text-salvia">{sessao.produtorNome}.</span>
+                            </>
+                        ) : "Sua roça, hoje."}
                     </h1>
                     <p className="max-w-[620px] text-[clamp(19px,2vw,22px)] text-texto-2">
                         A sua roça e o que está plantado nela, num lugar só.
