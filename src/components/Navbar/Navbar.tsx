@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
+import AcessoNavbar from "../AcessoNavbar/AcessoNavbar";
 import LogoArgos from "../LogoArgos/LogoArgos";
 
 // botao mobile
@@ -107,8 +108,8 @@ export default function Navbar() {
                 })}
             </nav>
 
-            {/* botão cta desktop (normal acima de 850px, oculto em 850px) */}
-            <Link to="/triagem" className="inline-flex max-[851px]:hidden min-h-12 items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-6 font-titulo text-[15px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.035] hover:brightness-110 focus-visible:scale-[1.035] active:scale-[.98] motion-reduce:transition-none">Começar</Link>
+            {/* acesso desktop: Entrar + Começar, ou o nome da pessoa + Hoje (oculto em 850px) */}
+            <AcessoNavbar variante="desktop" />
 
             {/* botão Hamburger (oculto no desktop, visível apenas de 850px para baixo) */}
             <button
@@ -193,12 +194,7 @@ export default function Navbar() {
                         isOpen ? "opacity-100 translate-y-0 delay-[330ms]" : "opacity-0 translate-y-3 delay-0"
                     }`}
                 >
-                    <Link
-                        to="/triagem"
-                        onClick={closeMenu}
-                        className="flex min-h-12 w-full items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-6 font-titulo text-[15px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[.98]"
-                    >Começar
-                    </Link>
+                    <AcessoNavbar variante="movel" aoNavegar={closeMenu} />
                 </div>
             </div>
         </header>

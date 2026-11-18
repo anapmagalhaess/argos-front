@@ -87,7 +87,9 @@ export default function LeitorDeTela() {
             const margemDireita = 16;
             
             const novoX = Math.max(12, larguraTela - larguraBotao - margemDireita);
-            const novoY = Math.min(alturaTela - 90, 100);
+            // No celular o topo é do menu da página: o botão começa na lateral, no meio da altura,
+            // onde não cobre links nem botões. Em telas largas fica no canto superior direito.
+            const novoY = larguraTela <= 850 ? Math.round(alturaTela * 0.55) : Math.min(alturaTela - 90, 100);
 
             setPosicao((posAtual) => {
                 if (posicionado) {

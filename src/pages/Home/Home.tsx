@@ -44,7 +44,7 @@ export default function Home() {
                             causaram R$ 12,6 bi em prejuízos, e a agricultura foi a mais atingida.
                         </p>
                     </div>
-                    <div className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
+                    <div className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-5">
                         <CardDores numero="01" titulo="Falta técnico por perto" descricao="Só cerca de 20% recebiam assistência técnica. A decisão fica por conta do produtor." />
                         <CardDores numero="02" titulo="Informação difícil de ler" descricao="O dado oficial existe, mas é espalhado e técnico. 23% dos produtores não leem nem escrevem." />
                         <CardDores numero="03" titulo="Celular sim, sinal nem sempre" descricao="83% da zona rural usa internet, mas 26% dos domicílios conectados dividem o sinal com o vizinho." />
@@ -58,7 +58,7 @@ export default function Home() {
 
             {/* Diferencial e legenda de severidade com BadgeAlerta. */}
             <section className="border-t border-linha bg-fundo py-24">
-                <div className="mx-auto grid max-w-[1200px] grid-cols-[repeat(auto-fit,minmax(340px,1fr))] items-start gap-14 px-7">
+                <div className="mx-auto grid max-w-[1200px] grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] items-start gap-14 px-7">
                     <div data-reveal className="flex flex-col gap-[18px]">
                         <p className="text-sm font-semibold uppercase tracking-[0.12em] text-salvia">O diferencial</p>
                         <h2 className="font-titulo text-[clamp(32px,4vw,50px)] leading-[1.08] font-extrabold uppercase text-bege">Eles respondem. 
@@ -76,10 +76,10 @@ export default function Home() {
             <section id="triagem" className="border-t border-linha bg-card py-24">
                 <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-7">
                     <h2 data-reveal className="text-center font-titulo text-[clamp(30px,3.6vw,44px)] leading-tight font-extrabold uppercase text-bege">Explore o Argos</h2>
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-5">
                         <CardExplorar titulo="Solução" descricao="Conheça o problema real, os dados oficiais e a tese completa do Argos." chamada="VER SOLUÇÃO →" para="/solucao" />
                         <CardExplorar titulo="Triagem" descricao="Responda com figuras e monte o perfil da sua roça." chamada="COMEÇAR →" para="/triagem" />
-                        <CardExplorar titulo="Hoje" descricao="Os avisos do seu município, com a fonte." chamada="VER AVISOS →" para="/hoje" />
+                        <CardExplorar titulo="Hoje" descricao="A sua roça e os dias que faltam para a colheita." chamada="VER A ROÇA →" para="/hoje" />
                         <CardExplorar titulo="Mapa das lavouras" descricao="O Brasil visto do satélite: clima, ar, umidade, solo e pragas de seis lavouras." chamada="ABRIR O MAPA →" para="/mapa" />
                         <CardExplorar titulo="Guia visual" descricao="Milho e feijão: saudável, praga, seca e excesso de água." chamada="ABRIR O GUIA →" para="/guia/milho" />
                         <CardExplorar titulo="Sobre" descricao="O problema, a solução e os ODS 2, 13 e 10." chamada="SABER MAIS →" para="/sobre" />

@@ -62,6 +62,12 @@ export default function Mapa() {
     useEffect(() => {
         const secao = secaoDoMapaRef.current
         if (!secao) return
+        // Sem IntersectionObserver (navegador antigo ou embutido) o mapa monta direto: melhor sem a
+        // descida animada do que sem mapa.
+        if (typeof IntersectionObserver === 'undefined') {
+            setMapaPerto(true)
+            return
+        }
         const observador = new IntersectionObserver(
             ([entrada]) => {
                 if (!entrada.isIntersecting) return

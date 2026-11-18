@@ -1,6 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Map as MapaDeSatelite } from 'maplibre-gl'
+import { Map as MapaDeSatelite, setWorkerUrl } from 'maplibre-gl'
+// O arquivo do worker (que processa os dados do mapa) precisa sair junto com o site. Sem este endereço
+// explícito, o build de produção não o inclui e o mapa nunca termina de carregar (só funcionava no dev).
+import enderecoDoWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import type { ExpressionSpecification, RasterDEMSourceSpecification, StyleSpecification } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { CONTORNO_DO_BRASIL, LIMITES_DO_BRASIL } from '../../data/contornoBrasil'
@@ -9,6 +12,8 @@ import type { Cultura } from '../../types/cultura'
 import { CAMADAS } from '../../utils/descreverCamada'
 import IconeCamada from '../IconeCamada/IconeCamada'
 import IconeCultura from '../IconeCultura/IconeCultura'
+
+setWorkerUrl(enderecoDoWorker)
 
 interface MapaArgosProps {
     culturas: Cultura[]

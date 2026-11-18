@@ -244,8 +244,8 @@ export default function Sobre() {
       <p className="m-0 up [color:var(--color-bege)] [text-transform:uppercase] [letter-spacing:.14em] [font-weight:600] [font-size:13px]">Depois da Global Solution</p>
       <h2 className="font-titulo m-0 [margin-top:16px] [font-size:clamp(32px,4.4vw,60px)] max-[760px]:[font-size:28px] max-[500px]:[font-size:24px] max-[380px]:[font-size:21px] [line-height:1.08] [font-weight:800] [text-transform:uppercase]">Avisos em tempo real, um painel para quem apoia o produtor e novos canais de aviso.</h2>
       <div className="[display:flex] [flex-wrap:wrap] [gap:12px_36px] [margin-top:32px]">
-        <Link to="/triagem" className="lnk inline-block no-underline transition-all duration-200 ease-out hover:-translate-y-0.5 hover:text-ambar hover:underline hover:decoration-2 hover:underline-offset-4 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-salvia motion-reduce:transition-none">Começar a triagem →</Link>
-        <Link to="/integrantes" className="lnk inline-block no-underline transition-all duration-200 ease-out hover:-translate-y-0.5 hover:text-ambar hover:underline hover:decoration-2 hover:underline-offset-4 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-salvia motion-reduce:transition-none">Conhecer a equipe →</Link>
+        <Link to="/triagem" className="lnk inline-block py-3 no-underline transition-all duration-200 ease-out hover:-translate-y-0.5 hover:text-ambar hover:underline hover:decoration-2 hover:underline-offset-4 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-salvia motion-reduce:transition-none">Começar a triagem →</Link>
+        <Link to="/integrantes" className="lnk inline-block py-3 no-underline transition-all duration-200 ease-out hover:-translate-y-0.5 hover:text-ambar hover:underline hover:decoration-2 hover:underline-offset-4 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-salvia motion-reduce:transition-none">Conhecer a equipe →</Link>
       </div>
     </div>
     </div>

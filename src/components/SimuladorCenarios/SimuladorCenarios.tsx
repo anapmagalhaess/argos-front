@@ -272,7 +272,7 @@ export default function SimuladorCenarios() {
               <button
                 type="button"
                 onClick={() => falarAlerta(cenario.audioTexto)}
-                className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all ${
+                className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all ${
                   estaOuvindo
                     ? "animate-pulse border-red-500 bg-red-950/40 text-red-300"
                     : "border-salvia bg-salvia/20 text-salvia hover:bg-salvia hover:text-fundo"

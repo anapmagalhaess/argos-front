@@ -48,7 +48,7 @@ export default function Steps() {
                     <h2 className="font-titulo text-[clamp(32px,4vw,50px)] leading-[1.08] font-extrabold uppercase text-bege">Um copiloto no bolso, em 5 passos.</h2>
                 </div>
 
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-5">
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))] gap-5">
                     {passos.map((passo, index) => (
                         <article
                             key={passo.titulo}

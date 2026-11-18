@@ -28,7 +28,7 @@ export default function Guia() {
     return (
         <main className="min-h-svh bg-[#E6DAC6] px-5 py-12 text-[#17110D] md:px-8">
             <div className="mx-auto max-w-3xl">
-                <Link to="/mapa" className="text-lg font-semibold text-[#2E5A43] underline underline-offset-4">
+                <Link to="/mapa" className="inline-flex min-h-11 items-center text-lg font-semibold text-[#2E5A43] underline underline-offset-4">
                     Voltar ao mapa
                 </Link>
                 <h1 className="mt-6 flex items-center gap-3 text-4xl font-bold text-[#2E5A43] sm:text-5xl">

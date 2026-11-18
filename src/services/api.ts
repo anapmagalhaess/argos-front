@@ -1,111 +1,102 @@
-import type { ErroApi } from '../types/erroApi';
+import type {
+    CampoComErro,
+    ErroDaApi,
+    PlantioEntrada,
+    Plantio,
+    Produtor,
+    ProdutorEntrada,
+    Propriedade,
+    PropriedadeEntrada,
+} from '../types/api'
 
 /**
-    URL base da API REST Java publicada no Render.
+ * Cliente da API Java do Argos. O endereço vem da variável VITE_API_URL (no Vite, só variáveis que
+ * começam com VITE_ chegam ao navegador). Sem a variável, usa a API publicada no Render; para
+ * testar com a API rodando na própria máquina, use VITE_API_URL=http://localhost:8080.
  */
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://argos-api-java.onrender.com';
+const BASE = String(import.meta.env.VITE_API_URL ?? 'https://argos-api-java.onrender.com').replace(/\/+$/, '')
 
-/**
- * Classe customizada de erro para respostas da API Java.
- * Permite que a interface recupere a mensagem e a lista de campos inválidos.
- */
-export class ErroDeApi extends Error {
-    corpo: ErroApi;
+/** A API manda cada campo inválido como "campo: mensagem"; a tela precisa dos dois separados. */
+function separarCampos(textos: string[]): CampoComErro[] {
+    return textos.map((texto) => {
+        const i = texto.indexOf(': ')
+        return i === -1 ? { campo: '', mensagem: texto } : { campo: texto.slice(0, i), mensagem: texto.slice(i + 2) }
+    })
+}
 
-    constructor(corpo: ErroApi) {
-        super(corpo.mensagem || `Erro na requisição (Status ${corpo.status})`);
-        this.name = 'ErroDeApi';
-        this.corpo = corpo;
+/** Erro de uma chamada à API: guarda o status HTTP e, no 400 de validação, os campos com problema. */
+export class ApiError extends Error {
+    status: number
+    campos: CampoComErro[]
+
+    constructor(status: number, mensagem: string, campos: CampoComErro[] = []) {
+        super(mensagem)
+        this.name = 'ApiError'
+        this.status = status
+        this.campos = campos
     }
 }
 
-/**
- * Função utilitária centralizada de requisições HTTP usando Fetch API nativa.
- */
-export async function requisicao<T>(
-    caminho: string,
-    opcoes: RequestInit = {},
+interface Opcoes {
+    metodo?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    corpo?: unknown
     sinal?: AbortSignal
-): Promise<T> {
-    const url = `${BASE_URL.replace(/\/$/, '')}${caminho.startsWith('/') ? caminho : `/${caminho}`}`;
+}
 
-    const cabecalhosPadrao: Record<string, string> = {
-        'Accept': 'application/json',
-    };
-
-    if (opcoes.body && typeof opcoes.body === 'string') {
-        cabecalhosPadrao['Content-Type'] = 'application/json';
+/** Faz a chamada, lê o JSON e transforma qualquer erro numa ApiError com mensagem pronta para a tela. */
+async function pedir<T>(rota: string, { metodo = 'GET', corpo, sinal }: Opcoes = {}): Promise<T> {
+    let resposta: Response
+    try {
+        resposta = await fetch(BASE + rota, {
+            method: metodo,
+            headers: corpo === undefined ? undefined : { 'Content-Type': 'application/json' },
+            body: corpo === undefined ? undefined : JSON.stringify(corpo),
+            signal: sinal,
+        })
+    } catch (erro) {
+        // Chamada cancelada de propósito (a pessoa saiu da tela): quem chamou trata.
+        if (erro instanceof DOMException && erro.name === 'AbortError') throw erro
+        throw new ApiError(0, 'Não deu para falar com o servidor. Veja se há internet e tente de novo.')
     }
 
-    const resposta = await fetch(url, {
-        ...opcoes,
-        signal: sinal,
-        headers: {
-            ...cabecalhosPadrao,
-            ...opcoes.headers,
-        },
-    });
+    if (resposta.status === 204) return undefined as T
 
-    // Se o status for 204 No Content (ex: DELETE bem sucedido)
-    if (resposta.status === 204) {
-        return undefined as T;
+    const texto = await resposta.text()
+    let json: unknown = null
+    try {
+        json = texto ? JSON.parse(texto) : null
+    } catch {
+        // Resposta que não é JSON (uma página de erro do servidor, por exemplo): vale a mensagem genérica.
     }
 
     if (!resposta.ok) {
-        let corpoErro: ErroApi;
-        try {
-            corpoErro = (await resposta.json()) as ErroApi;
-        } catch {
-            corpoErro = {
-                status: resposta.status,
-                mensagem: `O servidor retornou erro ${resposta.status}: ${resposta.statusText}`,
-            };
-        }
-
-        throw new ErroDeApi(corpoErro);
+        const erro = json as Partial<ErroDaApi> | null
+        throw new ApiError(
+            resposta.status,
+            erro?.mensagem ?? 'Algo deu errado do nosso lado. Tente de novo em instantes.',
+            separarCampos(erro?.campos ?? []).filter((c) => c.campo !== ''),
+        )
     }
-
-    return (await resposta.json()) as T;
+    return json as T
 }
 
-/**
- * Método de conveniência para requisições GET
- */
-export function buscar<T>(caminho: string, sinal?: AbortSignal): Promise<T> {
-    return requisicao<T>(caminho, { method: 'GET' }, sinal);
-}
+// ---- Cadastro: produtor, propriedade e plantio (1:N em cadeia) ----
 
-/**
- * Método de conveniência para requisições POST
- */
-export function enviar<T, B = unknown>(caminho: string, dados: B, sinal?: AbortSignal): Promise<T> {
-    return requisicao<T>(
-        caminho,
-        {
-            method: 'POST',
-            body: JSON.stringify(dados),
-        },
-        sinal
-    );
-}
+export const listarProdutores = (sinal?: AbortSignal) => pedir<Produtor[]>('/produtores', { sinal })
 
-/**
- * Método de conveniência para requisições PUT
- */
-export function atualizar<T, B = unknown>(caminho: string, dados: B, sinal?: AbortSignal): Promise<T> {
-    return requisicao<T>(
-        caminho,
-        {
-            method: 'PUT',
-            body: JSON.stringify(dados),
-        },
-        sinal
-    );
-}
+export const buscarProdutor = (id: number, sinal?: AbortSignal) => pedir<Produtor>(`/produtores/${id}`, { sinal })
 
-/**
- * Método de conveniência para requisições DELETE
- */
-export function remover(caminho: string, sinal?: AbortSignal): Promise<void> {
-    return requisicao<void>(caminho, { method: 'DELETE' }, sinal);
-}
+export const listarPropriedadesDoProdutor = (produtorId: number, sinal?: AbortSignal) =>
+    pedir<Propriedade[]>(`/produtores/${produtorId}/propriedades`, { sinal })
+
+export const cadastrarProdutor = (dados: ProdutorEntrada) =>
+    pedir<Produtor>('/produtores', { metodo: 'POST', corpo: dados })
+
+export const cadastrarPropriedade = (produtorId: number, dados: PropriedadeEntrada) =>
+    pedir<Propriedade>(`/produtores/${produtorId}/propriedades`, { metodo: 'POST', corpo: dados })
+
+export const cadastrarPlantio = (propriedadeId: number, dados: PlantioEntrada) =>
+    pedir<Plantio>(`/propriedades/${propriedadeId}/plantios`, { metodo: 'POST', corpo: dados })
+
+export const listarPlantios = (propriedadeId: number, sinal?: AbortSignal) =>
+    pedir<Plantio[]>(`/propriedades/${propriedadeId}/plantios`, { sinal })

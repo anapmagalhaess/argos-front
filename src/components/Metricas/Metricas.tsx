@@ -25,7 +25,7 @@ const metricas = [
 export default function Metricas() {
     return (
         <section aria-label="Dados sobre agricultura familiar" className="bg-mata py-14">
-            <div className="mx-auto grid max-w-[1200px] grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-7 px-7">
+            <div className="mx-auto grid max-w-[1200px] grid-cols-[repeat(auto-fit,minmax(min(100%,220px),1fr))] gap-7 px-7">
                 {metricas.map((metrica) => (
                     <article key={metrica.titulo} data-reveal className="metric-item">
                         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-bege">{metrica.titulo}</p>

@@ -9,7 +9,7 @@ export default function LogoArgos({ className = "" }: LogoArgosProps) {
         <Link
             to="/"
             aria-label="Argos"
-            className={`font-titulo font-extrabold uppercase tracking-[0.14em] ${className}`}>
+            className={`inline-flex min-h-11 items-center font-titulo font-extrabold uppercase tracking-[0.14em] ${className}`}>
             Argos<span className="text-salvia">.</span>
         </Link>
     );

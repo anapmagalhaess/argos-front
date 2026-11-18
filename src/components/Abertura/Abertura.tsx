@@ -125,7 +125,7 @@ export default function Abertura({ proximaParte }: AberturaProps) {
                 <div className="absolute inset-x-6 top-[30%] md:inset-x-auto md:top-[23%] md:left-[19%]">
                     <h1
                         aria-label="Aviso antes do problema"
-                        className="titulo-em-linhas font-display text-[3.4rem] leading-[0.95] font-bold uppercase md:text-[clamp(4rem,8.6vw,10.5rem)]"
+                        className="titulo-em-linhas font-display text-[min(3.4rem,calc((100vw-3rem)/6.2))] leading-[0.95] font-bold uppercase md:text-[clamp(4rem,8.6vw,10.5rem)]"
                     >
                         {TITULO.map((linha, ordem) => (
                             <span
