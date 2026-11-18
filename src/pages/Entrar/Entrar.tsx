@@ -2,11 +2,12 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { AvisoDeTela, Campo, ENTRADA } from "../../components/CampoForm/CampoForm";
+import EstadoCarregando from "../../components/EstadoCarregando/EstadoCarregando";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
 import { useConta } from "../../contexto/conta";
 import { ApiError } from "../../services/api";
-import { identificarPorTelefone, telefoneValido } from "../../services/autenticacao";
+import { formatarTelefone, identificarPorTelefone, telefoneValido } from "../../services/autenticacao";
 
 /*
     Entrar: a pessoa escreve o telefone que cadastrou e o Argos a reconhece. Não há senha: o banco
@@ -57,6 +58,7 @@ export default function Entrar() {
 
     return (
         <main className="flex min-h-screen min-h-svh w-full flex-col overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(800px_500px_at_90%_10%,rgba(125,190,140,.09),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_40%,var(--color-fundo)_100%)]">
+            {enviando && <EstadoCarregando titulo="Procurando o seu cadastro…" descricao="A resposta do servidor pode levar até cerca de 1 minuto." telaInteira />}
             <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-32 size-[430px] rounded-full border border-salvia/10 shadow-[0_0_0_24px_rgba(125,190,140,.025),0_0_0_58px_rgba(125,190,140,.02)]" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[8%] top-20 size-52 rounded-full bg-salvia/10 blur-[70px]" />
@@ -106,9 +108,10 @@ export default function Entrar() {
                                         {...a}
                                         className={ENTRADA}
                                         value={telefone}
+                                        maxLength={15}
                                         inputMode="numeric"
                                         autoComplete="tel"
-                                        onChange={(e) => { setTelefone(e.target.value); setErroDoCampo(""); setErroDaApi(null); }}
+                                        onChange={(e) => { setTelefone(formatarTelefone(e.target.value)); setErroDoCampo(""); setErroDaApi(null); }}
                                     />
                                 )}
                             </Campo>

@@ -1,26 +1,35 @@
-/**
- * Indicador acessível de carregamento.
- */
-export default function EstadoCarregando() {
-    return (
+import { createPortal } from "react-dom";
+
+interface EstadoCarregandoProps {
+    titulo?: string;
+    descricao?: string;
+    telaInteira?: boolean;
+}
+
+/** Cartão de espera compartilhado por ações que podem levar alguns instantes. */
+export default function EstadoCarregando({
+    titulo = "Estamos acordando o sistema…",
+    descricao = "A primeira chamada ao servidor pode levar até cerca de 1 minuto.",
+    telaInteira = false,
+}: EstadoCarregandoProps) {
+    const cartao = (
         <div
             role="status"
             aria-live="polite"
-            className="flex flex-col items-center gap-4 py-10 text-center"
+            aria-atomic="true"
+            className={telaInteira ? "fixed inset-0 z-[100] grid place-items-center bg-fundo/75 px-5 py-8 backdrop-blur-sm" : "w-full"}
         >
-            {/* Três pontos com animação suave */}
-            <div className="flex gap-2" aria-hidden="true">
-                <span className="h-3 w-3 animate-bounce rounded-full bg-salvia [animation-delay:0ms]" />
-                <span className="h-3 w-3 animate-bounce rounded-full bg-salvia [animation-delay:150ms]" />
-                <span className="h-3 w-3 animate-bounce rounded-full bg-salvia [animation-delay:300ms]" />
+            <div className="mx-auto flex w-full max-w-md flex-col items-center gap-4 rounded-3xl border border-linha bg-card px-7 py-8 text-center shadow-[0_24px_80px_rgba(0,0,0,.45)] sm:px-10">
+                <div className="flex items-center gap-3 py-2" aria-hidden="true">
+                    <span className="size-3.5 animate-bounce rounded-full bg-salvia motion-reduce:animate-none [animation-delay:0ms]" />
+                    <span className="size-3.5 animate-bounce rounded-full bg-ambar motion-reduce:animate-none [animation-delay:150ms]" />
+                    <span className="size-3.5 animate-bounce rounded-full bg-nivel-4 motion-reduce:animate-none [animation-delay:300ms]" />
+                </div>
+                <p className="font-titulo text-xl font-semibold text-bege">{titulo}</p>
+                <p className="text-sm leading-relaxed text-texto-2">{descricao}</p>
             </div>
-
-            <p className="font-corpo text-lg font-medium text-bege">
-                Estamos acordando o sistema, aguarde um pouco…
-            </p>
-            <p className="font-corpo text-sm text-texto-2">
-                A API no servidor pode levar até 1 minuto para inicializar na primeira chamada.
-            </p>
         </div>
     );
+
+    return telaInteira ? createPortal(cartao, document.body) : cartao;
 }

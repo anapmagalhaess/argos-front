@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router";
+import EstadoCarregando from "../EstadoCarregando/EstadoCarregando";
 import { useConta } from "../../contexto/conta";
 
 /*
@@ -20,14 +22,27 @@ const SECUNDARIO =
 
 export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps) {
     const { conta, sair } = useConta();
+    const [saindo, setSaindo] = useState(false);
     const location = useLocation();
     const currentPath = location.pathname.replace(/\/$/, "") || "/";
     const contaAtiva = currentPath === "/conta";
     const hojeAtivo = currentPath === "/hoje";
     const primeiroNome = conta?.produtorNome.split(" ")[0];
 
+    const iniciarSaida = () => {
+        if (saindo) return;
+        setSaindo(true);
+        window.setTimeout(() => {
+            sair();
+            aoNavegar?.();
+            setSaindo(false);
+        }, 650);
+    };
+
     if (variante === "desktop") {
         return (
+            <>
+            {saindo && <EstadoCarregando titulo="Saindo da sua conta…" descricao="Encerrando a sua entrada neste aparelho." telaInteira />}
             <div className="flex max-[1090px]:hidden items-center gap-3">
                 {conta ? (
                     <>
@@ -42,7 +57,7 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
                             </span>
                             Olá, {primeiroNome}
                         </Link>
-                        <button type="button" onClick={sair} className="cursor-pointer rounded-[10px] px-2 py-1.5 text-base font-medium text-texto-2 transition-colors duration-150 hover:text-bege focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia">
+                        <button type="button" onClick={iniciarSaida} disabled={saindo} className="cursor-pointer rounded-[10px] px-2 py-1.5 text-base font-medium text-texto-2 transition-colors duration-150 hover:text-bege focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia disabled:opacity-60">
                             Sair
                         </button>
                         <Link to="/hoje" aria-current={hojeAtivo ? "page" : undefined} className={`${CTA} ${hojeAtivo ? "shadow-[0_0_0_3px_rgba(125,190,140,.18),0_0_24px_rgba(125,190,140,.24)] ring-1 ring-salvia/70" : ""}`}>Hoje</Link>
@@ -56,15 +71,18 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
                     </>
                 )}
             </div>
+            </>
         );
     }
 
     return (
+        <>
+        {saindo && <EstadoCarregando titulo="Saindo da sua conta…" descricao="Encerrando a sua entrada neste aparelho." telaInteira />}
         <div className="flex flex-col gap-2.5">
             {conta ? (
                 <>
                     <Link to="/conta" onClick={aoNavegar} aria-current={contaAtiva ? "page" : undefined} className={`${SECUNDARIO} w-full ${contaAtiva ? "border-salvia bg-linha/50 text-bege shadow-[0_0_0_3px_rgba(125,190,140,.08)]" : ""}`}>Minha conta ({primeiroNome})</Link>
-                    <button type="button" onClick={() => { sair(); aoNavegar?.(); }} className={`${SECUNDARIO} w-full`}>Sair</button>
+                    <button type="button" onClick={iniciarSaida} disabled={saindo} className={`${SECUNDARIO} w-full disabled:opacity-60`}>Sair</button>
                     <Link to="/hoje" onClick={aoNavegar} aria-current={hojeAtivo ? "page" : undefined} className={`${CTA} w-full ${hojeAtivo ? "shadow-[0_0_0_3px_rgba(125,190,140,.18),0_0_24px_rgba(125,190,140,.24)] ring-1 ring-salvia/70" : ""}`}>Hoje</Link>
                 </>
             ) : (
@@ -74,5 +92,6 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
                 </>
             )}
         </div>
+        </>
     );
 }
