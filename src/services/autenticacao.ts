@@ -5,6 +5,21 @@ import type { DadosDaConta } from './sessao'
 /** Só os números do telefone: "(87) 99000-0001" vira "87990000001". */
 export const limparTelefone = (texto: string) => texto.replace(/\D/g, '')
 
+/** Formata o DDD e o número enquanto a pessoa digita, limitando a 11 dígitos. */
+export function formatarTelefone(texto: string): string {
+    const digitos = limparTelefone(texto).slice(0, 11)
+    if (digitos.length === 0) return ''
+    if (digitos.length === 1) return `(${digitos}`
+    if (digitos.length === 2) return `(${digitos})`
+
+    const ddd = digitos.slice(0, 2)
+    const numero = digitos.slice(2)
+    const separador = digitos.length > 10 ? 5 : 4
+
+    if (numero.length <= separador) return `(${ddd}) ${numero}`
+    return `(${ddd}) ${numero.slice(0, separador)}-${numero.slice(separador)}`
+}
+
 /** O telefone do banco tem DDD e 8 ou 9 dígitos: 10 ou 11 números no total. */
 export const telefoneValido = (texto: string) => /^\d{10,11}$/.test(limparTelefone(texto))
 

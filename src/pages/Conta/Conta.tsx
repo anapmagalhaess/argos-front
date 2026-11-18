@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import { AvisoDeTela } from "../../components/CampoForm/CampoForm";
+import EstadoCarregando from "../../components/EstadoCarregando/EstadoCarregando";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
 import { useConta } from "../../contexto/conta";
@@ -21,11 +23,22 @@ const BOTAO_CLARO =
 
 export default function Conta() {
     const { conta, aparelho, sair, esquecerAparelho } = useConta();
+    const [saindo, setSaindo] = useState(false);
     const produtor = useBusca(`produtor-${conta?.produtorId}`, conta ? (sinal) => buscarProdutor(conta.produtorId, sinal) : null);
+
+    const iniciarSaida = () => {
+        if (saindo) return;
+        setSaindo(true);
+        window.setTimeout(() => {
+            sair();
+            setSaindo(false);
+        }, 650);
+    };
 
     return (
         <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege">
-            <section className="relative overflow-hidden bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
+            {saindo && <EstadoCarregando titulo="Saindo da sua conta…" descricao="Encerrando a sua entrada neste aparelho." telaInteira />}
+            <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <Navbar />
                 <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
                     <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Minha conta</p>
@@ -85,7 +98,7 @@ export default function Conta() {
                                 </p>
                                 <div className="flex flex-wrap gap-3.5">
                                     <Link to="/hoje" className={BOTAO}>Ver os avisos de hoje</Link>
-                                    <button type="button" onClick={sair} className={BOTAO_CLARO}>Sair</button>
+                                    <button type="button" onClick={iniciarSaida} disabled={saindo} className={`${BOTAO_CLARO} disabled:cursor-not-allowed disabled:opacity-60`}>Sair</button>
                                     <button type="button" onClick={esquecerAparelho} className={BOTAO_CLARO}>Esquecer este aparelho</button>
                                 </div>
                             </div>

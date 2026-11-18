@@ -8,6 +8,7 @@ import type {
     Propriedade,
     PropriedadeEntrada,
 } from '../types/api'
+import type { Alerta } from '../types/alerta'
 
 /**
  * Cliente da API Java do Argos. O endereço vem da variável VITE_API_URL (no Vite, só variáveis que
@@ -80,6 +81,15 @@ async function pedir<T>(rota: string, { metodo = 'GET', corpo, sinal }: Opcoes =
     return json as T
 }
 
+// Operações genéricas compartilhadas pelos serviços de domínio.
+export const buscar = <T>(rota: string, sinal?: AbortSignal) => pedir<T>(rota, { sinal })
+export const enviar = <T, D>(rota: string, dados: D, sinal?: AbortSignal) =>
+    pedir<T>(rota, { metodo: 'POST', corpo: dados, sinal })
+export const atualizar = <T, D>(rota: string, dados: D, sinal?: AbortSignal) =>
+    pedir<T>(rota, { metodo: 'PUT', corpo: dados, sinal })
+export const remover = (rota: string, sinal?: AbortSignal) =>
+    pedir<void>(rota, { metodo: 'DELETE', sinal })
+
 // ---- Cadastro: produtor, propriedade e plantio (1:N em cadeia) ----
 
 export const listarProdutores = (sinal?: AbortSignal) => pedir<Produtor[]>('/produtores', { sinal })
@@ -88,6 +98,9 @@ export const buscarProdutor = (id: number, sinal?: AbortSignal) => pedir<Produto
 
 export const listarPropriedadesDoProdutor = (produtorId: number, sinal?: AbortSignal) =>
     pedir<Propriedade[]>(`/produtores/${produtorId}/propriedades`, { sinal })
+
+export const buscarPropriedade = (propriedadeId: number, sinal?: AbortSignal) =>
+    pedir<Propriedade>(`/propriedades/${propriedadeId}`, { sinal })
 
 export const cadastrarProdutor = (dados: ProdutorEntrada) =>
     pedir<Produtor>('/produtores', { metodo: 'POST', corpo: dados })
@@ -98,5 +111,14 @@ export const cadastrarPropriedade = (produtorId: number, dados: PropriedadeEntra
 export const cadastrarPlantio = (propriedadeId: number, dados: PlantioEntrada) =>
     pedir<Plantio>(`/propriedades/${propriedadeId}/plantios`, { metodo: 'POST', corpo: dados })
 
+export const atualizarPlantio = (plantioId: number, dados: PlantioEntrada) =>
+    pedir<Plantio>(`/plantios/${plantioId}`, { metodo: 'PUT', corpo: dados })
+
+export const deletarPlantio = (plantioId: number) =>
+    pedir<void>(`/plantios/${plantioId}`, { metodo: 'DELETE' })
+
 export const listarPlantios = (propriedadeId: number, sinal?: AbortSignal) =>
     pedir<Plantio[]>(`/propriedades/${propriedadeId}/plantios`, { sinal })
+
+export const listarAlertasDoMunicipio = (municipioId: number, sinal?: AbortSignal) =>
+    pedir<Alerta[]>(`/municipios/${municipioId}/alertas`, { sinal })

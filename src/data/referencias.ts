@@ -18,14 +18,14 @@ export interface CulturaRef {
 }
 
 export const MUNICIPIOS: MunicipioRef[] = [
-    { id: 2611101, nome: 'Petrolina', uf: 'PE', regiao: 'NORDESTE' },
+    { id: 2902104, nome: 'Araci', uf: 'BA', regiao: 'NORDESTE' },
+    { id: 4302105, nome: 'Bento Gonçalves', uf: 'RS', regiao: 'SUL' },
+    { id: 4104808, nome: 'Cascavel', uf: 'PR', regiao: 'SUL' },
+    { id: 4204202, nome: 'Chapecó', uf: 'SC', regiao: 'SUL' },
     { id: 2918407, nome: 'Juazeiro', uf: 'BA', regiao: 'NORDESTE' },
     { id: 2408003, nome: 'Mossoró', uf: 'RN', regiao: 'NORDESTE' },
-    { id: 2208007, nome: 'Picos', uf: 'PI', regiao: 'NORDESTE' },
-    { id: 4302105, nome: 'Bento Gonçalves', uf: 'RS', regiao: 'SUL' },
     { id: 4314100, nome: 'Passo Fundo', uf: 'RS', regiao: 'SUL' },
-    { id: 4204202, nome: 'Chapecó', uf: 'SC', regiao: 'SUL' },
-    { id: 4104808, nome: 'Cascavel', uf: 'PR', regiao: 'SUL' },
+    { id: 2208007, nome: 'Picos', uf: 'PI', regiao: 'NORDESTE' },
 ]
 
 // Os ids seguem a ordem das sequences do banco: MILHO é 1, FEIJAO 2, e assim por diante
@@ -42,7 +42,7 @@ export const municipioPorId = (id: number) => MUNICIPIOS.find((m) => m.id === id
 
 export const culturaPorId = (id: number) => CULTURAS.find((c) => c.id === id)
 
-/** "Petrolina (PE)"; se o código não está na lista, cai num texto neutro. */
+/** "Município (UF)"; se o código não está na lista, cai num texto neutro. */
 export const rotuloDoMunicipio = (id: number) => {
     const m = municipioPorId(id)
     return m ? `${m.nome} (${m.uf})` : 'Município não listado'

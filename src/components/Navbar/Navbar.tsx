@@ -14,7 +14,7 @@ const navLinks = [
     { label: "Contato", to: "/contato", delay: "delay-[285ms]" },
 ];
 
-// botao mobile <= 850px | navbar desktop => 851px
+// Botão hambúrguer até 1090px; navegação desktop a partir de 1091px.
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -29,10 +29,10 @@ export default function Navbar() {
         setIsOpen(false);
     }
 
-    // fecha o menu caso a janela seja redimensionada para acima de 850px
+    // fecha o menu caso a janela seja redimensionada para o breakpoint desktop
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 850) {
+            if (window.innerWidth > 1090) {
                 setIsOpen(false);
             }
         };
@@ -63,9 +63,9 @@ export default function Navbar() {
         };
     }, [isOpen]);
 
-    // o botão de hamburger só deve alterar estado em telas <= 850px
+    // O botão de hambúrguer só altera o estado em telas até 1090px.
     const toggleMenu = () => {
-        if (window.innerWidth > 850) return;
+        if (window.innerWidth > 1090) return;
         setIsOpen((prev) => !prev);
     };
 
@@ -77,7 +77,7 @@ export default function Navbar() {
         <header className="relative z-50 mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-7 py-6">
             <LogoArgos className="text-[28px] text-bege" />
 
-            {/* navegação desktop (normal acima de 850px, oculta em 850px) */}
+            {/* Navegação desktop a partir de 1091px. */}
             <nav
                 aria-label="Principal"
                 onMouseLeave={() => setHoveredPath(null)}
@@ -86,7 +86,7 @@ export default function Navbar() {
                         setHoveredPath(null);
                     }
                 }}
-                className="flex max-[851px]:hidden flex-wrap gap-0.5 text-base font-medium"
+                className="flex max-[1090px]:hidden flex-wrap gap-0.5 text-base font-medium"
             >
                 {navLinks.map((item) => {
                     const isActive = currentPath === item.to;
@@ -108,17 +108,17 @@ export default function Navbar() {
                 })}
             </nav>
 
-            {/* acesso desktop: Entrar + Começar, ou o nome da pessoa + Hoje (oculto em 850px) */}
+            {/* Acesso desktop (oculto até 1090px). */}
             <AcessoNavbar variante="desktop" />
 
-            {/* botão Hamburger (oculto no desktop, visível apenas de 850px para baixo) */}
+            {/* Botão hambúrguer visível até 1090px. */}
             <button
                 type="button"
                 aria-label={isOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
                 aria-expanded={isOpen}
                 aria-controls="argos-menu-mobile"
                 onClick={toggleMenu}
-                className="hidden max-[851px]:inline-flex relative h-12 w-12 items-center justify-center rounded-[14px] border border-linha bg-card/90 text-bege shadow-md transition-all duration-200 hover:border-salvia hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia active:scale-95"
+                className="hidden max-[1090px]:inline-flex relative h-12 w-12 items-center justify-center rounded-[14px] border border-linha bg-card/90 text-bege shadow-md transition-all duration-200 hover:border-salvia hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia active:scale-95"
             >
                 <div className="relative flex h-5 w-6 flex-col justify-between" aria-hidden="true">
                     <span
@@ -143,7 +143,7 @@ export default function Navbar() {
             <div
                 aria-hidden="true"
                 onClick={closeMenu}
-                className={`hidden max-[851px]:block fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] transition-all duration-300 motion-reduce:transition-none ${
+                className={`hidden max-[1090px]:block fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] transition-all duration-300 motion-reduce:transition-none ${
                     isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
                 }`}
             />
@@ -153,7 +153,7 @@ export default function Navbar() {
                 id="argos-menu-mobile"
                 role="region"
                 aria-label="Navegação móvel"
-                className={`hidden max-[851px]:block absolute top-full left-4 right-4 z-50 mt-2 max-h-[calc(100vh-100px)] overflow-y-auto rounded-[24px] border border-linha bg-[#1F1814]/98 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.75)] backdrop-blur-xl transition-all duration-300 ease-out motion-reduce:transition-none sm:left-7 sm:right-7 ${
+                className={`hidden max-[1090px]:block absolute top-full left-4 right-4 z-50 mt-2 max-h-[calc(100vh-100px)] overflow-y-auto rounded-[24px] border border-linha bg-[#1F1814]/98 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.75)] backdrop-blur-xl transition-all duration-300 ease-out motion-reduce:transition-none sm:left-7 sm:right-7 ${
                     isOpen
                         ? "opacity-100 visible pointer-events-auto translate-y-0 scale-100"
                         : "opacity-0 invisible pointer-events-none -translate-y-4 scale-[0.97]"
