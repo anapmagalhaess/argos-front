@@ -57,7 +57,7 @@ export default function Entrar() {
 
     return (
         <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(800px_500px_at_90%_10%,rgba(125,190,140,.09),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_40%,var(--color-fundo)_100%)]">
-            <section className="relative overflow-hidden bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
+            <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-32 size-[430px] rounded-full border border-salvia/10 shadow-[0_0_0_24px_rgba(125,190,140,.025),0_0_0_58px_rgba(125,190,140,.02)]" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[8%] top-20 size-52 rounded-full bg-salvia/10 blur-[70px]" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[16%] top-24 hidden size-2 rounded-full bg-ambar shadow-[0_0_0_8px_rgba(217,166,80,.08),0_0_24px_rgba(217,166,80,.6)] md:block" />

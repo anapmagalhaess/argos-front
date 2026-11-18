@@ -25,7 +25,7 @@ export default function Conta() {
 
     return (
         <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege">
-            <section className="relative overflow-hidden bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
+            <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <Navbar />
                 <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
                     <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Minha conta</p>

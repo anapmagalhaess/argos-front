@@ -24,7 +24,7 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
 
     if (variante === "desktop") {
         return (
-            <div className="flex max-[851px]:hidden items-center gap-3">
+            <div className="flex max-[1090px]:hidden items-center gap-3">
                 {conta ? (
                     <>
                         <Link

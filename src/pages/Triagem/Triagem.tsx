@@ -233,7 +233,7 @@ export default function Triagem() {
 
     return (
         <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(700px_420px_at_82%_0%,rgba(125,190,140,.12),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_38%,var(--color-fundo)_100%)]">
-            <section className="relative overflow-hidden bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
+            <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-25">
                     <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-full w-full">
                         <g fill="none" stroke="#7DBE8C" strokeWidth="1.2" strokeDasharray="3 6">
