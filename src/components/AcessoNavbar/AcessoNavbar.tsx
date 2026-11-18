@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import EstadoCarregando from "../EstadoCarregando/EstadoCarregando";
 import { useConta } from "../../contexto/conta";
@@ -46,20 +46,13 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
             <div className="flex max-[1090px]:hidden items-center gap-3">
                 {conta ? (
                     <>
-                        <Link
-                            to="/conta"
-                            aria-label={`Minha conta, ${primeiroNome}`}
-                            aria-current={contaAtiva ? "page" : undefined}
-                            className={`relative flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-base font-medium text-bege transition-colors duration-150 after:absolute after:right-2 after:bottom-0 after:left-2 after:h-0.5 after:rounded-full after:bg-salvia after:transition-transform hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia ${contaAtiva ? "after:scale-x-100" : "after:scale-x-0"}`}
-                        >
-                            <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full bg-mata font-titulo text-sm font-bold text-bege">
-                                {primeiroNome?.charAt(0).toUpperCase()}
-                            </span>
-                            Olá, {primeiroNome}
-                        </Link>
-                        <button type="button" onClick={iniciarSaida} disabled={saindo} className="cursor-pointer rounded-[10px] px-2 py-1.5 text-base font-medium text-texto-2 transition-colors duration-150 hover:text-bege focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia disabled:opacity-60">
-                            Sair
-                        </button>
+                        <MenuPerfil
+                            nome={primeiroNome ?? ""}
+                            contaAtiva={contaAtiva}
+                            aoSair={iniciarSaida}
+                            saindo={saindo}
+                            variante="desktop"
+                        />
                         <Link to="/hoje" aria-current={hojeAtivo ? "page" : undefined} className={`${CTA} ${hojeAtivo ? "shadow-[0_0_0_3px_rgba(125,190,140,.18),0_0_24px_rgba(125,190,140,.24)] ring-1 ring-salvia/70" : ""}`}>Hoje</Link>
                     </>
                 ) : (
@@ -81,8 +74,14 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
         <div className="flex flex-col gap-2.5">
             {conta ? (
                 <>
-                    <Link to="/conta" onClick={aoNavegar} aria-current={contaAtiva ? "page" : undefined} className={`${SECUNDARIO} w-full ${contaAtiva ? "border-salvia bg-linha/50 text-bege shadow-[0_0_0_3px_rgba(125,190,140,.08)]" : ""}`}>Minha conta ({primeiroNome})</Link>
-                    <button type="button" onClick={iniciarSaida} disabled={saindo} className={`${SECUNDARIO} w-full disabled:opacity-60`}>Sair</button>
+                    <MenuPerfil
+                        nome={primeiroNome ?? ""}
+                        contaAtiva={contaAtiva}
+                        aoSair={iniciarSaida}
+                        aoNavegar={aoNavegar}
+                        saindo={saindo}
+                        variante="movel"
+                    />
                     <Link to="/hoje" onClick={aoNavegar} aria-current={hojeAtivo ? "page" : undefined} className={`${CTA} w-full ${hojeAtivo ? "shadow-[0_0_0_3px_rgba(125,190,140,.18),0_0_24px_rgba(125,190,140,.24)] ring-1 ring-salvia/70" : ""}`}>Hoje</Link>
                 </>
             ) : (
@@ -93,5 +92,107 @@ export default function AcessoNavbar({ variante, aoNavegar }: AcessoNavbarProps)
             )}
         </div>
         </>
+    );
+}
+
+function MenuPerfil({
+    nome,
+    contaAtiva,
+    aoSair,
+    aoNavegar,
+    saindo,
+    variante,
+}: {
+    nome: string;
+    contaAtiva: boolean;
+    aoSair: () => void;
+    aoNavegar?: () => void;
+    saindo: boolean;
+    variante: "desktop" | "movel";
+}) {
+    const [aberto, setAberto] = useState(false);
+    const menuId = useId();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const botaoRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (!aberto) return;
+
+        const fecharFora = (evento: PointerEvent) => {
+            if (!containerRef.current?.contains(evento.target as Node)) setAberto(false);
+        };
+        const fecharComEsc = (evento: KeyboardEvent) => {
+            if (evento.key === "Escape") {
+                setAberto(false);
+                botaoRef.current?.focus();
+            }
+        };
+
+        document.addEventListener("pointerdown", fecharFora);
+        document.addEventListener("keydown", fecharComEsc);
+        return () => {
+            document.removeEventListener("pointerdown", fecharFora);
+            document.removeEventListener("keydown", fecharComEsc);
+        };
+    }, [aberto]);
+
+    const moverParaConta = () => {
+        setAberto(false);
+        aoNavegar?.();
+    };
+
+    return (
+        <div ref={containerRef} className={variante === "desktop" ? "relative" : "relative w-full"}>
+            <button
+                ref={botaoRef}
+                type="button"
+                aria-label={`Abrir menu da conta de ${nome}`}
+                aria-expanded={aberto}
+                aria-controls={menuId}
+                onClick={() => setAberto((atual) => !atual)}
+                className={variante === "desktop"
+                    ? `relative flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-base font-medium text-bege transition-colors after:absolute after:right-2 after:bottom-0 after:left-2 after:h-0.5 after:rounded-full after:bg-salvia after:transition-transform hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia ${contaAtiva ? "after:scale-x-100" : "after:scale-x-0"}`
+                    : `${SECUNDARIO} w-full justify-between ${contaAtiva ? "border-salvia bg-linha/50 shadow-[0_0_0_3px_rgba(125,190,140,.08)]" : ""}`}
+            >
+                <span className="flex items-center gap-2.5">
+                    {variante === "desktop" && (
+                        <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full bg-mata font-titulo text-sm font-bold text-bege">
+                            {nome.charAt(0).toUpperCase()}
+                        </span>
+                    )}
+                    Olá, {nome}
+                </span>
+                <svg aria-hidden="true" viewBox="0 0 20 20" className={`size-4 shrink-0 transition-transform ${aberto ? "rotate-180" : ""}`} fill="none">
+                    <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            </button>
+
+            {aberto && (
+                <nav
+                    id={menuId}
+                    aria-label="Opções da conta"
+                    className={variante === "desktop"
+                        ? "absolute right-0 top-full z-[60] mt-2 flex min-w-48 flex-col gap-1 rounded-2xl border border-linha bg-card p-2 shadow-[0_18px_45px_rgba(0,0,0,.45)]"
+                        : "relative z-20 mt-2 flex flex-col gap-1 rounded-2xl border border-linha bg-fundo/80 p-2 shadow-inner"}
+                >
+                    <Link
+                        to="/conta"
+                        aria-current={contaAtiva ? "page" : undefined}
+                        onClick={moverParaConta}
+                        className={`rounded-xl px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia ${contaAtiva ? "bg-salvia/10 text-salvia" : "text-bege hover:bg-linha/50 hover:text-salvia"}`}
+                    >
+                        Minha conta
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => { setAberto(false); aoSair(); }}
+                        disabled={saindo}
+                        className="rounded-xl px-4 py-3 text-left text-sm font-semibold text-texto-2 transition-colors hover:bg-linha/50 hover:text-bege focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia disabled:opacity-60"
+                    >
+                        Sair
+                    </button>
+                </nav>
+            )}
+        </div>
     );
 }
