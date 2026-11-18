@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { AvisoDeTela } from "../../components/CampoForm/CampoForm";
 import { useConta } from "../../contexto/conta";
@@ -17,11 +18,25 @@ import { diasAte, formatarData } from "../../utils/datas";
 const BOTAO =
     "inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.035] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ambar motion-reduce:transition-none";
 
+function saudacaoPorHorario(hora: number): string {
+    if (hora < 5) return "Boa madrugada";
+    if (hora < 12) return "Bom dia";
+    if (hora < 18) return "Boa tarde";
+    return "Boa noite";
+}
+
 export default function Hoje() {
     // A triagem deixa guardado quem é a pessoa e qual é a roça dela
     const { conta: sessao } = useConta();
     const propriedadeId = sessao?.propriedadeId ?? null;
     const plantios = useBusca(`plantios-${propriedadeId}`, propriedadeId === null ? null : (sinal) => listarPlantios(propriedadeId, sinal));
+    const [horaAtual, setHoraAtual] = useState(() => new Date().getHours());
+
+    useEffect(() => {
+        const atualizarHora = () => setHoraAtual(new Date().getHours());
+        const intervalo = window.setInterval(atualizarHora, 60_000);
+        return () => window.clearInterval(intervalo);
+    }, []);
 
     return (
         <main className="flex min-h-screen min-h-svh w-full flex-col overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(700px_480px_at_100%_60%,rgba(125,190,140,.06),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_38%,var(--color-fundo)_100%)]">
@@ -34,7 +49,7 @@ export default function Hoje() {
                 <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
                     <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Hoje</p>
                     <h1 className="font-titulo text-[clamp(40px,5.4vw,72px)] leading-none font-extrabold uppercase">
-                        {sessao ? `Bom dia, ${sessao.produtorNome}.` : "Sua roça, hoje."}
+                        {sessao ? `${saudacaoPorHorario(horaAtual)}, ${sessao.produtorNome}.` : "Sua roça, hoje."}
                     </h1>
                     <p className="max-w-[620px] text-[clamp(19px,2vw,22px)] text-texto-2">
                         A sua roça e o que está plantado nela, num lugar só.
