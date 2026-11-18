@@ -5,6 +5,7 @@ import BadgeAlerta from "../../components/BadgeAlerta/BadgeAlerta";
 import CardRiscoQuebra from "../../components/CardRiscoQuebra/CardRiscoQuebra";
 import { AvisoDeTela } from "../../components/CampoForm/CampoForm";
 import EstadoVazio from "../../components/EstadoVazio/EstadoVazio";
+import GerenciarPlantios from "../../components/GerenciarPlantios/GerenciarPlantios";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
 import { useConta } from "../../contexto/conta";
@@ -15,7 +16,7 @@ import { buscarAlertasDoMunicipio } from "../../services/alertaService";
 import { listarPlantios } from "../../services/api";
 import { ROTULO_TIPO_ALERTA } from "../../types/alerta";
 import type { Alerta } from "../../types/alerta";
-import type { Plantio } from "../../types/plantio";
+import type { Plantio } from "../../types/api";
 import type { EntradaPredicao } from "../../types/predicao";
 import { diasAte, formatarData } from "../../utils/datas";
 
@@ -219,37 +220,13 @@ export default function Hoje() {
                                 )}
 
                                 {aba === "plantios" && (
-                                    <div>
-                                        <Titulo etiqueta="Acompanhamento" titulo="O que está plantado" />
-                                        {plantios.carregando && <AvisoDeTela tipo="carregando">Buscando os seus plantios…</AvisoDeTela>}
-                                        {plantios.erro && <AvisoDeTela tipo="erro" acao={{ rotulo: "Tentar de novo", aoClicar: plantios.tentarDeNovo }}>{plantios.erro.message}</AvisoDeTela>}
-                                        {plantios.dados?.length === 0 && <EstadoVazio mensagem="Ainda não há plantios cadastrados nesta roça." />}
-                                        {listaPlantios.length > 0 && (
-                                            <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-4">
-                                                {listaPlantios.map((p) => {
-                                                    const dias = diasAte(p.dataColheitaPrevista);
-                                                    return (
-                                                        <li key={p.id} className="rounded-2xl border border-linha bg-fundo/70 p-5 sm:p-6">
-                                                            <div className="flex flex-wrap items-start justify-between gap-3">
-                                                                <div>
-                                                                    <p className="text-xs font-semibold text-texto-2">Cultura</p>
-                                                                    <h3 className="mt-1 font-titulo text-2xl font-bold uppercase">{culturaPorId(p.culturaId)?.nome ?? "Cultura"}</h3>
-                                                                </div>
-                                                                <span className="rounded-full border border-salvia/30 bg-salvia/10 px-3 py-1 text-xs font-semibold text-salvia">{rotuloDe(ESTAGIOS, p.estagio)}</span>
-                                                            </div>
-                                                            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-dashed border-linha pt-4 text-sm">
-                                                                <div><p className="text-texto-2">Área plantada</p><p className="mt-1 font-semibold">{p.areaHa.toLocaleString("pt-BR")} ha</p></div>
-                                                                <div><p className="text-texto-2">Plantado em</p><p className="mt-1 font-semibold">{formatarData(p.dataPlantio)}</p></div>
-                                                            </div>
-                                                            <p className="mt-4 rounded-xl border border-linha/70 bg-card px-4 py-3 text-sm">
-                                                                {dias < 0 ? `Colheita prevista para ${formatarData(p.dataColheitaPrevista)} (data já passou).` : dias === 0 ? "Colheita prevista para hoje." : `Colheita em ${formatarData(p.dataColheitaPrevista)} · faltam ${dias} ${dias === 1 ? "dia" : "dias"}.`}
-                                                            </p>
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        )}
-                                    </div>
+                                    <GerenciarPlantios
+                                        propriedadeId={propriedadeId}
+                                        plantios={listaPlantios}
+                                        carregando={plantios.carregando}
+                                        erro={plantios.erro?.message}
+                                        aoTentarNovamente={plantios.tentarDeNovo}
+                                    />
                                 )}
 
                                 {aba === "avisos" && (
