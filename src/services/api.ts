@@ -1,53 +1,111 @@
-import type { ErroApi } from '../types/erroApi'
+import type { ErroApi } from '../types/erroApi';
 
 /**
- * URL base da API Java do Argos, configurada via variável de ambiente.
+    URL base da API REST Java publicada no Render.
  */
-const BASE_URL = import.meta.env.VITE_API_URL as string | undefined
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://argos-api-java.onrender.com';
 
 /**
- * Erro amigável gerado quando a API responde com um corpo de erro padrão.
- * Separa o objeto original para quem quiser inspecionar os campos.
+ * Classe customizada de erro para respostas da API Java.
+ * Permite que a interface recupere a mensagem e a lista de campos inválidos.
  */
 export class ErroDeApi extends Error {
-  corpo: ErroApi
-  constructor(corpo: ErroApi) {
-    super(corpo.mensagem)
-    this.name = 'ErroDeApi'
-    this.corpo = corpo
-  }
+    corpo: ErroApi;
+
+    constructor(corpo: ErroApi) {
+        super(corpo.mensagem || `Erro na requisição (Status ${corpo.status})`);
+        this.name = 'ErroDeApi';
+        this.corpo = corpo;
+    }
 }
 
 /**
- * Faz um GET na API Java e devolve o JSON tipado.
- *
- * - Monta a URL a partir de `VITE_API_URL` + `caminho`.
- * - Lança `ErroDeApi` quando a resposta NÃO é 2xx e o corpo segue o formato padrão.
- * - Lança `Error` genérico em outros casos (rede fora, corpo inesperado).
- * - Aceita `AbortSignal` para cancelar a requisição (cleanup do useEffect).
+ * Função utilitária centralizada de requisições HTTP usando Fetch API nativa.
  */
-export async function buscar<T>(caminho: string, sinal: AbortSignal): Promise<T> {
-  if (!BASE_URL) {
-    throw new Error('A variável VITE_API_URL não foi configurada.')
-  }
+export async function requisicao<T>(
+    caminho: string,
+    opcoes: RequestInit = {},
+    sinal?: AbortSignal
+): Promise<T> {
+    const url = `${BASE_URL.replace(/\/$/, '')}${caminho.startsWith('/') ? caminho : `/${caminho}`}`;
 
-  const url = `${BASE_URL}${caminho}`
-  const resposta = await fetch(url, { signal: sinal })
+    const cabecalhosPadrao: Record<string, string> = {
+        'Accept': 'application/json',
+    };
 
-  if (!resposta.ok) {
-    // Tenta ler o corpo de erro padrão da API Java
-    try {
-      const corpo = (await resposta.json()) as ErroApi
-      if (corpo.mensagem) {
-        throw new ErroDeApi(corpo)
-      }
-    } catch (erro) {
-      // Se já é um ErroDeApi, re-lança
-      if (erro instanceof ErroDeApi) throw erro
-      // Senão, corpo não segue o padrão
+    if (opcoes.body && typeof opcoes.body === 'string') {
+        cabecalhosPadrao['Content-Type'] = 'application/json';
     }
-    throw new Error(`O servidor respondeu com o erro ${resposta.status}.`)
-  }
 
-  return (await resposta.json()) as T
+    const resposta = await fetch(url, {
+        ...opcoes,
+        signal: sinal,
+        headers: {
+            ...cabecalhosPadrao,
+            ...opcoes.headers,
+        },
+    });
+
+    // Se o status for 204 No Content (ex: DELETE bem sucedido)
+    if (resposta.status === 204) {
+        return undefined as T;
+    }
+
+    if (!resposta.ok) {
+        let corpoErro: ErroApi;
+        try {
+            corpoErro = (await resposta.json()) as ErroApi;
+        } catch {
+            corpoErro = {
+                status: resposta.status,
+                mensagem: `O servidor retornou erro ${resposta.status}: ${resposta.statusText}`,
+            };
+        }
+
+        throw new ErroDeApi(corpoErro);
+    }
+
+    return (await resposta.json()) as T;
+}
+
+/**
+ * Método de conveniência para requisições GET
+ */
+export function buscar<T>(caminho: string, sinal?: AbortSignal): Promise<T> {
+    return requisicao<T>(caminho, { method: 'GET' }, sinal);
+}
+
+/**
+ * Método de conveniência para requisições POST
+ */
+export function enviar<T, B = unknown>(caminho: string, dados: B, sinal?: AbortSignal): Promise<T> {
+    return requisicao<T>(
+        caminho,
+        {
+            method: 'POST',
+            body: JSON.stringify(dados),
+        },
+        sinal
+    );
+}
+
+/**
+ * Método de conveniência para requisições PUT
+ */
+export function atualizar<T, B = unknown>(caminho: string, dados: B, sinal?: AbortSignal): Promise<T> {
+    return requisicao<T>(
+        caminho,
+        {
+            method: 'PUT',
+            body: JSON.stringify(dados),
+        },
+        sinal
+    );
+}
+
+/**
+ * Método de conveniência para requisições DELETE
+ */
+export function remover(caminho: string, sinal?: AbortSignal): Promise<void> {
+    return requisicao<void>(caminho, { method: 'DELETE' }, sinal);
 }

@@ -1,14 +1,12 @@
 /**
- * Chaves do localStorage usadas pela Triagem e pela página Hoje.
- *
- * Manter centralizado aqui garante que ambas as páginas leiam e
- * gravem com as mesmas chaves.
+ * Chaves centralizadas para armazenamento seguro no localStorage do navegador.
+ * Compartilhadas entre a Triagem, a página Hoje e os serviços.
  */
 export const CHAVES_STORAGE = {
-  /** Código (id) do produtor vindo do cadastro. */
-  produtorId: 'argos_produtor_id',
-  /** Código (id) da propriedade do produtor. */
-  propriedadeId: 'argos_propriedade_id',
-  /** Código (id) do município do produtor (atalho para evitar GET extra). */
-  municipioId: 'argos_municipio_id',
-} as const
+    /** Código ID do produtor cadastrado */
+    produtorId: 'argos_produtor_id',
+    /** Código ID da propriedade selecionada/cadastrada */
+    propriedadeId: 'argos_propriedade_id',
+    /** Código IBGE do município do produtor */
+    municipioId: 'argos_municipio_id',
+} as const;

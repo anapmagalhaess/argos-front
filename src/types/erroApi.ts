@@ -1,15 +1,16 @@
-/** Corpo de erro padrão devolvido pela API Java do Argos (status 400, 404, 405, 409, 500). */
+/**
+ * Modelo de erro retornado pela API REST Java do Argos.
+ * Mapeia a classe br.com.fiap.argos.handler.Erro do Spring Boot.
+ */
 export interface ErroApi {
-  timestamp: string
-  status: number
-  erro: string
-  mensagem: string
-  caminho: string
-  campos: CampoInvalido[]
-}
-
-/** Detalhe de validação quando o erro é 400 (campo que falhou + motivo). */
-export interface CampoInvalido {
-  campo: string
-  mensagem: string
+    /** Código de status HTTP (ex: 400, 404, 405, 409, 500) */
+    status: number;
+    /** Mensagem descritiva do erro */
+    mensagem: string;
+    /** Lista de mensagens ou campos inválidos (especialmente em erros 400 de Bean Validation) */
+    campos?: string[];
+    /** Campos opcionais caso o payload siga o formato RFC 7807 expandido */
+    timestamp?: string;
+    erro?: string;
+    caminho?: string;
 }
