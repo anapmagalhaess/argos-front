@@ -76,7 +76,7 @@ A aplicação consome a API Java do Argos, publicada no Render. O endereço padr
 | :--- | :--- |
 | Cadastro / triagem | `POST /produtores`, `POST /produtores/{id}/propriedades`, `POST /propriedades/{id}/plantios` |
 | Entrar | Consultas de produtores e propriedades |
-| Hoje | Consulta de plantios e dados associados |
+| Hoje | Consulta de plantios e dados associados a lavoura |
 | Conta | Consulta de produtor; edição dos dados suportados pela API |
 
 As chamadas estão organizadas em serviços e usam tipos TypeScript. A interface trata carregamento, erros de comunicação, validações e listas sem resultados.
