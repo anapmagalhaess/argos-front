@@ -11,4 +11,6 @@ export interface Integrante {
     materias: string[]
     /** Caminho da foto dentro de public/ (ex.: "/integrantes/572279.webp"). Sem foto, o card mostra as iniciais. */
     foto?: string
+    linkedin?: string
+    github?: string
 }

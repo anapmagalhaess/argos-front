@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import type { Integrante } from "../../types/integrante";
 
 /*
@@ -17,7 +19,7 @@ function pegarIniciais(nome: string): string {
     return (primeira + ultima).toUpperCase();
 }
 
-export default function CardIntegrante({ rm, nome, turma, funcao, materias, foto }: CardIntegranteProps) {
+export default function CardIntegrante({ rm, nome, turma, funcao, materias, foto, linkedin, github }: CardIntegranteProps) {
     // Se o arquivo da foto não abrir, o card troca a imagem quebrada pelas iniciais.
     const [fotoFalhou, setFotoFalhou] = useState(false);
     const mostrarFoto = Boolean(foto) && !fotoFalhou;
@@ -58,6 +60,20 @@ export default function CardIntegrante({ rm, nome, turma, funcao, materias, foto
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-[.12em] text-salvia">{funcao}</p>
                     <h2 className="mt-1 font-titulo text-[22px] leading-tight font-bold text-bege">{nome}</h2>
+                    {(linkedin || github) && (
+                        <nav aria-label={`Redes de ${nome}`} className="mt-3 flex gap-2">
+                            {linkedin && (
+                                <a href={linkedin} target="_blank" rel="noopener noreferrer" aria-label={`LinkedIn de ${nome}`} title="LinkedIn" className="flex size-11 items-center justify-center rounded-full border border-linha text-bege transition-colors hover:border-salvia hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar">
+                                    <FontAwesomeIcon icon={faLinkedin} aria-hidden="true" className="text-xl" />
+                                </a>
+                            )}
+                            {github && (
+                                <a href={github} target="_blank" rel="noopener noreferrer" aria-label={`GitHub de ${nome}`} title="GitHub" className="flex size-11 items-center justify-center rounded-full border border-linha text-bege transition-colors hover:border-salvia hover:text-salvia focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar">
+                                    <FontAwesomeIcon icon={faGithub} aria-hidden="true" className="text-xl" />
+                                </a>
+                            )}
+                        </nav>
+                    )}
                 </div>
 
                 <div>
