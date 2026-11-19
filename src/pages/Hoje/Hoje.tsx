@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { Link } from "react-router";
 import BadgeAlerta from "../../components/BadgeAlerta/BadgeAlerta";
+import IconeFA from "../../components/IconeFA/IconeFA";
+import type { NomeIconeFA } from "../../components/IconeFA/IconeFA";
 import { AvisoDeTela } from "../../components/CampoForm/CampoForm";
 import EstadoVazio from "../../components/EstadoVazio/EstadoVazio";
 import GerenciarPlantios from "../../components/GerenciarPlantios/GerenciarPlantios";
@@ -20,11 +22,11 @@ import { diasAte, formatarData } from "../../utils/datas";
 
 type Aba = "visao" | "plantios" | "avisos" | "previsoes";
 
-const ABAS: { id: Aba; rotulo: string; simbolo: string }[] = [
-    { id: "visao", rotulo: "Visão geral", simbolo: "◉" },
-    { id: "plantios", rotulo: "Plantios", simbolo: "⌂" },
-    { id: "avisos", rotulo: "Avisos", simbolo: "!" },
-    { id: "previsoes", rotulo: "Previsões", simbolo: "↗" },
+const ABAS: { id: Aba; rotulo: string; simbolo: NomeIconeFA }[] = [
+    { id: "visao", rotulo: "Visão geral", simbolo: "compass" },
+    { id: "plantios", rotulo: "Plantios", simbolo: "seedling" },
+    { id: "avisos", rotulo: "Avisos", simbolo: "bell" },
+    { id: "previsoes", rotulo: "Previsões", simbolo: "chart-line" },
 ];
 
 // Níveis 1 a 4 (cor + número + palavra, nunca só cor)
@@ -163,7 +165,7 @@ export default function Hoje() {
                                                 onKeyDown={moverAba}
                                                 className={`inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl border px-4 font-titulo text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-salvia ${on ? "border-salvia bg-salvia text-fundo" : "border-linha text-texto-2 hover:border-texto-2 hover:text-bege"}`}
                                             >
-                                                <span aria-hidden="true">{a.simbolo}</span>
+                                                <IconeFA nome={a.simbolo} className="size-[18px]" />
                                                 {a.rotulo}
                                             </button>
                                         );

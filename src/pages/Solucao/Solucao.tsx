@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import IconeFA from "../../components/IconeFA/IconeFA";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
@@ -209,15 +210,15 @@ export default function Solucao() {
                 <p className="text-xs text-texto-2 font-mono mt-1">Embrapa [F22] · CNA / SENAR [F24]</p>
                 <ul className="mt-6 space-y-4 text-sm text-texto-2">
                   <li className="flex items-start gap-2.5">
-                    <span className="text-red-400 font-bold shrink-0">✕</span>
+                    <IconeFA nome="xmark" className="mt-0.5 size-4 shrink-0 text-red-400" />
                     <span><strong>Exigem pergunta ativa:</strong> O produtor precisa saber exatamente o que perguntar, formular texto digitado e ter familiaridade com escrita.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-red-400 font-bold shrink-0">✕</span>
+                    <IconeFA nome="xmark" className="mt-0.5 size-4 shrink-0 text-red-400" />
                     <span><strong>Dependem de internet estável:</strong> Funcionam confinados ao WhatsApp, sem qualquer tolerância a quedas de conexão ou trabalho offline na roça.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-red-400 font-bold shrink-0">✕</span>
+                    <IconeFA nome="xmark" className="mt-0.5 size-4 shrink-0 text-red-400" />
                     <span><strong>Risco regulatório e de custos:</strong> Políticas da Meta baniram assistentes de IA de uso geral em contas empresariais de WhatsApp [F35].</span>
                   </li>
                 </ul>
@@ -239,15 +240,15 @@ export default function Solucao() {
                 <p className="text-xs text-texto-2 font-mono mt-1">ICRISAT / Plantix [F26]</p>
                 <ul className="mt-6 space-y-4 text-sm text-texto-2">
                   <li className="flex items-start gap-2.5">
-                    <span className="text-amber-400 font-bold shrink-0">✕</span>
+                    <IconeFA nome="xmark" className="mt-0.5 size-4 shrink-0 text-amber-400" />
                     <span><strong>Ação pós-dano:</strong> A planta já precisa estar amarelada, furada ou infestada para que a câmera consiga detectar a enfermidade.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-amber-400 font-bold shrink-0">✕</span>
+                    <IconeFA nome="xmark" className="mt-0.5 size-4 shrink-0 text-amber-400" />
                     <span><strong>Hardware exigente:</strong> Exige smartphone moderno com câmera limpa e alta taxa de upload de imagens pesadas para nuvem.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-amber-400 font-bold shrink-0">✕</span>
+                    <IconeFA nome="xmark" className="mt-0.5 size-4 shrink-0 text-amber-400" />
                     <span><strong>Não previne choques climáticos:</strong> Não calcula risco de quebra de safra por estiagem antes do plantio.</span>
                   </li>
                 </ul>
@@ -272,19 +273,19 @@ export default function Solucao() {
                 <p className="text-xs text-salvia font-mono mt-1">CitizenTech Proativo · Offline First</p>
                 <ul className="mt-6 space-y-4 text-sm text-bege">
                   <li className="flex items-start gap-2.5">
-                    <span className="text-salvia font-bold shrink-0">✓</span>
+                    <IconeFA nome="check" className="mt-0.5 size-4 shrink-0 text-salvia" />
                     <span><strong className="text-white">Avisa antes:</strong> Cruza a cultura cadastrada com modelos preditivos de ML para emitir alertas antes da semeadura.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-salvia font-bold shrink-0">✓</span>
+                    <IconeFA nome="check" className="mt-0.5 size-4 shrink-0 text-salvia" />
                     <span><strong className="text-white">Figura + Áudio + Cor:</strong> Sistema de 4 níveis inspirado no INMET, botão "ouvir" e conformidade com a Lei da Linguagem Simples.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-salvia font-bold shrink-0">✓</span>
+                    <IconeFA nome="check" className="mt-0.5 size-4 shrink-0 text-salvia" />
                     <span><strong className="text-white">Armazenamento Offline:</strong> O último painel e as recomendações ficam salvas no navegador (PWA / localStorage).</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="text-salvia font-bold shrink-0">✓</span>
+                    <IconeFA nome="check" className="mt-0.5 size-4 shrink-0 text-salvia" />
                     <span><strong className="text-white">Rede Comunitária de Pragas:</strong> Relatos do vizinho viram avisos no raio do município em tempo hábil.</span>
                   </li>
                 </ul>
