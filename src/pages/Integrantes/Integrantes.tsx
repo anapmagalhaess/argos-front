@@ -44,11 +44,11 @@ export default function Integrantes() {
             <section aria-label="Integrantes do grupo" className="relative overflow-hidden border-t border-linha/60 bg-[radial-gradient(ellipse_at_50%_0%,rgba(125,190,140,.055),transparent_60%),radial-gradient(circle_at_1px_1px,rgba(230,218,198,.075)_1px,transparent_0)] [background-size:auto,28px_28px] pt-12 pb-24">
                 <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 h-px w-48 -translate-x-1/2 bg-gradient-to-r from-transparent via-salvia/50 to-transparent" />
                 <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/2 size-72 -translate-x-1/2 rounded-full bg-ambar/[.045] blur-3xl" />
-                <ul className="mx-auto flex w-full max-w-300 flex-wrap justify-center gap-6 px-7">
+                <ul className="mx-auto flex w-full max-w-300 flex-wrap justify-center gap-x-8 gap-y-10 px-7">
                     {integrantes.map((integrante) => (
                         <li
                             key={integrante.rm}
-                            className="flex w-full sm:w-[calc((100%-24px)/2)] md:w-[calc((100%-48px)/3)] xl:w-[calc((100%-96px)/5)]"
+                            className="flex w-full sm:w-[calc((100%-32px)/2)] md:w-[calc((100%-64px)/3)] xl:w-[calc((100%-128px)/5)]"
                         >
                             <CardIntegrante {...integrante} />
                         </li>

@@ -5,8 +5,8 @@ import type {
     Plantio,
     Produtor,
     ProdutorEntrada,
-    Propriedade,
     PropriedadeEntrada,
+    Propriedade,
 } from '../types/api'
 import type { Alerta } from '../types/alerta'
 
@@ -105,8 +105,14 @@ export const buscarPropriedade = (propriedadeId: number, sinal?: AbortSignal) =>
 export const cadastrarProdutor = (dados: ProdutorEntrada) =>
     pedir<Produtor>('/produtores', { metodo: 'POST', corpo: dados })
 
+export const atualizarProdutor = (id: number, dados: ProdutorEntrada) =>
+    pedir<Produtor>(`/produtores/${id}`, { metodo: 'PUT', corpo: dados })
+
 export const cadastrarPropriedade = (produtorId: number, dados: PropriedadeEntrada) =>
     pedir<Propriedade>(`/produtores/${produtorId}/propriedades`, { metodo: 'POST', corpo: dados })
+
+export const atualizarPropriedade = (id: number, dados: PropriedadeEntrada) =>
+    pedir<Propriedade>(`/propriedades/${id}`, { metodo: 'PUT', corpo: dados })
 
 export const cadastrarPlantio = (propriedadeId: number, dados: PlantioEntrada) =>
     pedir<Plantio>(`/propriedades/${propriedadeId}/plantios`, { metodo: 'POST', corpo: dados })

@@ -42,6 +42,7 @@ interface AberturaProps {
 export default function Abertura({ proximaParte }: AberturaProps) {
     // Quem pediu menos movimento no aparelho vê a foto da colheita no lugar do vídeo.
     const [semMovimento] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    const [menuAberto, setMenuAberto] = useState(false)
 
     return (
         <section
@@ -87,35 +88,51 @@ export default function Abertura({ proximaParte }: AberturaProps) {
                 <div className="absolute inset-x-0 top-0 flex items-start justify-between px-6 pt-8 md:px-12 md:pt-12">
                     {/* O logotipo do Argos, o mesmo da barra de navegação e do rodapé. */}
                     <LogoArgos className="entrada text-[28px] text-bege" />
-                    <p
-                        style={{ animationDelay: '200ms' }}
-                        className="entrada text-right font-condensed text-xl leading-[1.05] font-semibold tracking-[0.04em] uppercase md:absolute md:left-[58%] md:text-left md:text-[2rem]"
-                    >
-                        De olho
-                        <br />
-                        na sua
-                        <br />
-                        roça
-                    </p>
                 </div>
 
-                {/* O menu das páginas. Em telas largas fica na lateral, cada link com o seu traço;
-                    no celular vira uma fileira de links logo abaixo da marca. */}
+                {/* Em telas maiores o menu fica na lateral; até 1090px, abre pelo botão hambúrguer. */}
                 <nav
                     aria-label="Páginas do site"
-                    className="absolute inset-x-6 top-28 flex flex-wrap gap-x-5 gap-y-1 md:right-[46%] lg:inset-x-auto lg:top-1/2 lg:left-0 lg:-translate-y-1/2 lg:flex-col lg:flex-nowrap lg:gap-3"
+                    className="absolute inset-x-auto top-1/2 left-0 hidden -translate-y-1/2 flex-col gap-3 min-[1091px]:flex"
                 >
                     {PAGINAS.map((pagina, ordem) => (
                         <Link
                             key={pagina.para}
                             to={pagina.para}
                             style={{ animationDelay: `${500 + ordem * 90}ms` }}
-                            className={`entrada group flex min-h-11 items-center gap-5 text-lg font-semibold lg:min-h-0 ${FOCO}`}
+                            className={`entrada group flex min-h-11 items-center gap-5 text-lg font-semibold ${FOCO}`}
                         >
                             <span
                                 aria-hidden="true"
-                                className="ml-6 hidden h-px w-8 bg-current opacity-70 transition-[width,margin,opacity] duration-300 group-hover:ml-0 group-hover:w-14 group-hover:opacity-100 lg:block"
+                                className="ml-6 h-px w-8 bg-current opacity-70 transition-[width,margin,opacity] duration-300 group-hover:ml-0 group-hover:w-14 group-hover:opacity-100"
                             />
+                            {pagina.nome}
+                        </Link>
+                    ))}
+                </nav>
+
+                <button
+                    type="button"
+                    aria-label={menuAberto ? 'Fechar menu de páginas' : 'Abrir menu de páginas'}
+                    aria-expanded={menuAberto}
+                    aria-controls="menu-inicio-mobile"
+                    onClick={() => setMenuAberto((aberto) => !aberto)}
+                    className={`absolute top-7 right-6 z-30 flex size-12 items-center justify-center rounded-full border border-[#E6DAC6]/70 bg-[#17110D]/55 text-[#E6DAC6] backdrop-blur transition-colors hover:bg-[#E6DAC6] hover:text-[#17110D] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#7DBE8C] md:top-11 md:right-12 min-[1091px]:hidden ${FOCO}`}
+                >
+                    <span className="sr-only">{menuAberto ? 'Fechar menu' : 'Abrir menu'}</span>
+                    <span aria-hidden="true" className="flex w-5 flex-col gap-1.5">
+                        <span className={`h-0.5 w-full bg-current transition-transform ${menuAberto ? 'translate-y-2 rotate-45' : ''}`} />
+                        <span className={`h-0.5 w-full bg-current transition-opacity ${menuAberto ? 'opacity-0' : ''}`} />
+                        <span className={`h-0.5 w-full bg-current transition-transform ${menuAberto ? '-translate-y-2 -rotate-45' : ''}`} />
+                    </span>
+                </button>
+                <nav
+                    id="menu-inicio-mobile"
+                    aria-label="Páginas do site"
+                    className={`absolute top-24 right-6 z-20 flex w-[min(20rem,calc(100%-3rem))] flex-col gap-1 rounded-2xl border border-[#E6DAC6]/25 bg-[#17110D]/95 p-3 shadow-2xl backdrop-blur transition-all md:top-28 md:right-12 min-[1091px]:hidden ${menuAberto ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0 pointer-events-none'}`}
+                >
+                    {PAGINAS.map((pagina) => (
+                        <Link key={pagina.para} to={pagina.para} onClick={() => setMenuAberto(false)} className={`flex min-h-12 items-center rounded-xl px-4 font-semibold hover:bg-[#E6DAC6]/10 ${FOCO}`}>
                             {pagina.nome}
                         </Link>
                     ))}

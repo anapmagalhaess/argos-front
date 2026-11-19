@@ -35,7 +35,7 @@ const canais: CardContatoProps[] = [
         valor: "(11) 4000-0000",
         icone: "phone",
     },
-];
+] satisfies CardContatoProps[];
 
 export default function Contato() {
     return (

@@ -13,6 +13,8 @@ export const integrantes: Integrante[] = [
         funcao: 'Front-end',
         materias: ['Front-End Design Engineering'],
         foto: '/integrantes/560871.webp',
+        linkedin: 'https://www.linkedin.com/in/anaclmagalhaes/',
+        github: 'https://github.com/anapmagalhaess',
     },
     {
         rm: '573301',
@@ -21,6 +23,8 @@ export const integrantes: Integrante[] = [
         funcao: 'API em Java',
         materias: ['Domain Driven Design Using Java'],
         foto: '/integrantes/573301.webp',
+        linkedin: 'https://www.linkedin.com/in/diogoareis/',
+        github: 'https://github.com/DioohReis',
     },
     {
         rm: '572244',
@@ -29,6 +33,8 @@ export const integrantes: Integrante[] = [
         funcao: 'Engenharia de Software',
         materias: ['Software Engineering and Business Model'],
         foto: '/integrantes/572244.webp',
+        linkedin: 'https://www.linkedin.com/in/gabriel-razo-dantas-34724b301/',
+        github: 'https://github.com/gabrielrazod9j-ops',
     },
     {
         rm: '572279',
@@ -37,6 +43,8 @@ export const integrantes: Integrante[] = [
         funcao: 'Dados e IA',
         materias: ['Building Relational Database', 'Artificial Intelligence & Chatbot'],
         foto: '/integrantes/572279.webp',
+        linkedin: 'https://www.linkedin.com/in/gabriel-ricardo-lima/',
+        github: 'https://github.com/gabriel-ricardo-20',
     },
     {
         rm: '569178',
@@ -45,5 +53,7 @@ export const integrantes: Integrante[] = [
         funcao: 'Python',
         materias: ['Computational Thinking Using Python'],
         foto: '/integrantes/569178.webp',
+        linkedin: 'https://www.linkedin.com/in/pedrolimeis/',
+        github: 'https://github.com/pedrolimeisdev',
     },
 ]
