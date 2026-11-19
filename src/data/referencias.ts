@@ -18,7 +18,6 @@ export interface CulturaRef {
 }
 
 export const MUNICIPIOS: MunicipioRef[] = [
-    { id: 2902104, nome: 'Araci', uf: 'BA', regiao: 'NORDESTE' },
     { id: 4302105, nome: 'Bento Gonçalves', uf: 'RS', regiao: 'SUL' },
     { id: 4104808, nome: 'Cascavel', uf: 'PR', regiao: 'SUL' },
     { id: 4204202, nome: 'Chapecó', uf: 'SC', regiao: 'SUL' },
