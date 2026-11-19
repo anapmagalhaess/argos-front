@@ -5,8 +5,8 @@ import type { EntradaPredicao, NivelRisco, RespostaProdutividade, RespostaRiscoQ
 
 /*
     CardRiscoQuebra: card "risco de quebra" da tela Hoje (BÔNUS da GS).
-    Pede as duas previsões à API Flask e mostra o resultado com cor + ícone + palavra.
-    Se a Flask estiver desligada, mostra um erro só dentro do card: o resto da tela continua funcionando.
+    Pede as duas previsões à API de IA e mostra o resultado com cor + ícone + palavra.
+    Se a API estiver indisponível, mostra um erro só dentro do card: o resto da tela continua funcionando.
 */
 
 interface CardRiscoQuebraProps {
@@ -44,8 +44,8 @@ export default function CardRiscoQuebra({ entrada, legenda }: CardRiscoQuebraPro
                 setProdutividade(respostaProdutividade);
             } catch (falha) {
                 if (controle.signal.aborted) return;
-                // TypeError ("Failed to fetch") = a Flask não respondeu (desligada ou sem CORS).
-                if (falha instanceof TypeError) setErro("A previsão da IA está desligada.");
+                // TypeError ("Failed to fetch") = a API não respondeu (indisponível ou sem CORS).
+                if (falha instanceof TypeError) setErro("A previsão da IA está indisponível.");
                 else if (falha instanceof Error) setErro(falha.message);
                 else setErro("Erro desconhecido.");
             } finally {
@@ -69,6 +69,7 @@ export default function CardRiscoQuebra({ entrada, legenda }: CardRiscoQuebraPro
                 <h2 id="titulo-risco" className="font-titulo text-2xl font-bold">Risco de quebra da safra</h2>
                 <span className="text-sm font-semibold uppercase tracking-[.12em] text-salvia">Previsão da IA</span>
             </div>
+            <p className="mt-2 text-sm text-texto-2">{legenda}</p>
 
             {/* aria-live: o leitor de tela avisa quando o resultado ou o erro aparecem */}
             <div aria-live="polite" className="mt-5">
@@ -109,7 +110,7 @@ interface ResultadoRiscoProps {
 }
 
 function ResultadoRisco({ risco, produtividade }: ResultadoRiscoProps) {
-    // Se a Flask mandar um valor fora da lista, mostra o texto dela em amarelo (atenção).
+    // Se a API mandar um valor fora da lista, mostra o texto dela em amarelo (atenção).
     const visual = NIVEL_DO_RISCO[risco.risco] ?? { nivel: 2, texto: `Risco ${risco.risco}` };
     const porcentagem = Math.round(risco.probabilidade * 100);
     const kgPorHectare = Math.round(produtividade.kg_ha_previsto).toLocaleString("pt-BR");
