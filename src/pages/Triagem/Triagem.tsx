@@ -22,6 +22,31 @@ import { hojeEmTexto, lerNumero } from "../../utils/datas";
 */
 
 const PASSOS = ["Você", "Sua roça", "O que plantou"];
+const AREA_MAXIMA_HA = 100000;
+const DIAS_PARA_REGISTRO_RETROATIVO = 730;
+
+function somarDias(texto: string, dias: number) {
+    const data = new Date(`${texto}T00:00:00Z`);
+    data.setUTCDate(data.getUTCDate() + dias);
+    return data.toISOString().slice(0, 10);
+}
+
+function dataValida(texto: string) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(texto)) return false;
+    const data = new Date(`${texto}T00:00:00Z`);
+    return Number.isFinite(data.getTime()) && data.toISOString().slice(0, 10) === texto;
+}
+
+function areaValida(texto: string) {
+    return /^\d{1,6}(?:[.,]\d{1,2})?$/.test(texto.trim());
+}
+
+function temCaractereDeControle(texto: string) {
+    return [...texto].some((caractere) => {
+        const codigo = caractere.charCodeAt(0);
+        return codigo <= 31 || codigo === 127;
+    });
+}
 
 interface Dados {
     nome: string;
@@ -56,15 +81,17 @@ function validarVoce(d: Dados): Erros {
     const e: Erros = {};
     if (!d.nome.trim()) e["produtor.nome"] = "Escreva o seu nome.";
     else if (d.nome.trim().length > 80) e["produtor.nome"] = "O nome pode ter no máximo 80 letras.";
-    if (!/^\d{10,11}$/.test(d.telefone.replace(/\D/g, ""))) e["produtor.telefone"] = "Escreva o telefone com DDD, só números (10 ou 11 dígitos).";
-    if (!d.municipioId) e["produtor.municipioId"] = "Escolha o seu município.";
-    if (!d.canalPreferido) e["produtor.canalPreferido"] = "Escolha como prefere receber os avisos.";
-    if (!d.preferenciaLeitura) e["produtor.preferenciaLeitura"] = "Diga se prefere ouvir ou ler.";
+    else if (temCaractereDeControle(d.nome)) e["produtor.nome"] = "Retire caracteres inválidos do nome.";
+    const telefone = d.telefone.replace(/\D/g, "");
+    if (!/^\d{10,11}$/.test(telefone) || /^([0-9])\1+$/.test(telefone)) e["produtor.telefone"] = "Escreva um telefone válido com DDD (10 ou 11 dígitos).";
+    if (!MUNICIPIOS.some((m) => String(m.id) === d.municipioId)) e["produtor.municipioId"] = "Escolha um município da lista.";
+    if (!CANAIS.some((o) => o.valor === d.canalPreferido)) e["produtor.canalPreferido"] = "Escolha uma opção da lista.";
+    if (!LEITURA.some((o) => o.valor === d.preferenciaLeitura)) e["produtor.preferenciaLeitura"] = "Escolha uma opção da lista.";
     if (d.anosExperiencia.trim() !== "") {
         const anos = lerNumero(d.anosExperiencia);
-        if (!Number.isInteger(anos) || anos < 0 || anos > 99) e["produtor.anosExperiencia"] = "Escreva um número de 0 a 99.";
+        if (!/^\d{1,2}$/.test(d.anosExperiencia.trim()) || !Number.isInteger(anos) || anos < 0 || anos > 99) e["produtor.anosExperiencia"] = "Escreva um número inteiro de 0 a 99.";
     }
-    if (!d.recebeAter) e["produtor.recebeAter"] = "Diga se um técnico visita a sua roça.";
+    if (!SIM_NAO.some((o) => o.valor === d.recebeAter)) e["produtor.recebeAter"] = "Escolha se um técnico visita a sua roça.";
     if (!d.consentimento) e["produtor.consentimento"] = "Para se cadastrar, o Argos precisa do seu aceite para guardar esses dados.";
     return e;
 }
@@ -73,24 +100,38 @@ function validarRoca(d: Dados): Erros {
     const e: Erros = {};
     if (!d.propNome.trim()) e["propriedade.nome"] = "Dê um nome para a sua roça.";
     else if (d.propNome.trim().length > 80) e["propriedade.nome"] = "O nome pode ter no máximo 80 letras.";
+    else if (temCaractereDeControle(d.propNome)) e["propriedade.nome"] = "Retire caracteres inválidos do nome.";
+    if (d.fonteAgua && !FONTES_DE_AGUA.some((o) => o.valor === d.fonteAgua)) e["propriedade.fonteAgua"] = "Escolha uma fonte de água da lista.";
+    if (d.irrigacao && !IRRIGACOES.some((o) => o.valor === d.irrigacao)) e["propriedade.irrigacao"] = "Escolha um tipo de irrigação da lista.";
     const area = lerNumero(d.propAreaHa);
-    if (!(area > 0)) e["propriedade.areaHa"] = "Escreva a área em hectares, maior que zero.";
-    else if (area > 999999.99) e["propriedade.areaHa"] = "Esse número está grande demais.";
+    if (!areaValida(d.propAreaHa) || !(area > 0)) e["propriedade.areaHa"] = "Escreva uma área válida, entre 0,01 e 100.000 hectares, com até duas casas decimais.";
+    else if (area > AREA_MAXIMA_HA) e["propriedade.areaHa"] = "A área não pode passar de 100.000 hectares.";
     return e;
 }
 
 function validarPlantio(d: Dados): Erros {
     const e: Erros = {};
     if (!d.culturaId) return e; // sem cultura escolhida = a pessoa pulou este passo
+    const cultura = CULTURAS.find((item) => String(item.id) === d.culturaId);
+    if (!cultura) {
+        e["plantio.culturaId"] = "Escolha uma cultura da lista.";
+        return e;
+    }
     const area = lerNumero(d.plantioAreaHa);
     const areaDaRoca = lerNumero(d.propAreaHa);
-    if (!(area > 0)) e["plantio.areaHa"] = "Escreva a área plantada em hectares, maior que zero.";
+    if (!areaValida(d.plantioAreaHa) || !(area > 0)) e["plantio.areaHa"] = "Escreva uma área válida, maior que zero e com até duas casas decimais.";
     else if (area > areaDaRoca) e["plantio.areaHa"] = `Não pode passar da área da roça (${areaDaRoca} ha).`;
-    if (!d.dataPlantio) e["plantio.dataPlantio"] = "Diga quando foi plantado.";
-    else if (d.dataPlantio > hojeEmTexto()) e["plantio.dataPlantio"] = "A data do plantio não pode ser no futuro.";
-    if (!d.dataColheita) e["plantio.dataColheitaPrevista"] = "Diga quando pretende colher.";
-    else if (d.dataPlantio && d.dataColheita <= d.dataPlantio) e["plantio.dataColheitaPrevista"] = "A colheita tem que ser depois do plantio.";
-    if (!d.estagio) e["plantio.estagio"] = "Diga em que fase a lavoura está.";
+    const hoje = hojeEmTexto();
+    const dataMinimaPlantio = somarDias(hoje, -Math.min(DIAS_PARA_REGISTRO_RETROATIVO, cultura.cicloDias * 2));
+    const plantioValido = dataValida(d.dataPlantio);
+    if (!plantioValido) e["plantio.dataPlantio"] = "Informe uma data válida.";
+    else if (d.dataPlantio > hoje) e["plantio.dataPlantio"] = "A data do plantio não pode ser no futuro.";
+    else if (d.dataPlantio < dataMinimaPlantio) e["plantio.dataPlantio"] = `A data está distante demais. Para ${cultura.nome}, informe um plantio de até ${Math.min(DIAS_PARA_REGISTRO_RETROATIVO, cultura.cicloDias * 2)} dias atrás.`;
+    if (!dataValida(d.dataColheita)) e["plantio.dataColheitaPrevista"] = "Informe uma data válida.";
+    else if (plantioValido && d.dataColheita <= d.dataPlantio) e["plantio.dataColheitaPrevista"] = "A colheita tem que ser depois do plantio.";
+    else if (d.dataColheita < hoje) e["plantio.dataColheitaPrevista"] = "A previsão de colheita não pode estar no passado.";
+    else if (plantioValido && d.dataColheita > somarDias(d.dataPlantio, cultura.cicloDias * 2)) e["plantio.dataColheitaPrevista"] = `A previsão está distante demais. Para ${cultura.nome}, use até ${cultura.cicloDias * 2} dias após o plantio.`;
+    if (!ESTAGIOS.some((o) => o.valor === d.estagio)) e["plantio.estagio"] = "Escolha uma fase da lista.";
     return e;
 }
 
@@ -129,6 +170,15 @@ export default function Triagem() {
     };
 
     const municipioEscolhido = municipioPorId(Number(dados.municipioId));
+    const culturaEscolhida = CULTURAS.find((item) => String(item.id) === dados.culturaId);
+    const hoje = hojeEmTexto();
+    const minimoPlantio = somarDias(hoje, -(culturaEscolhida ? Math.min(DIAS_PARA_REGISTRO_RETROATIVO, culturaEscolhida.cicloDias * 2) : DIAS_PARA_REGISTRO_RETROATIVO));
+    const minimoColheita = dataValida(dados.dataPlantio) && dados.dataPlantio >= hoje
+        ? somarDias(dados.dataPlantio, 1)
+        : hoje;
+    const maximoColheita = culturaEscolhida && dataValida(dados.dataPlantio)
+        ? somarDias(dados.dataPlantio, culturaEscolhida.cicloDias * 2)
+        : undefined;
 
     function continuar() {
         const novos = passo === 0 ? validarVoce(dados) : validarRoca(dados);
@@ -327,8 +377,8 @@ export default function Triagem() {
                             {passo === 0 && (
                                 <fieldset disabled={bloqueio.produtor} className="flex flex-col gap-6 disabled:opacity-60">
                                     {bloqueio.produtor && <p className="text-texto-2">Seu cadastro já foi feito. Esses dados não mudam por aqui.</p>}
-                                    <Campo rotulo="Seu nome" erro={erros["produtor.nome"]}>
-                                        {(a) => <input {...a} className={ENTRADA} value={dados.nome} maxLength={80} autoComplete="name" onChange={(e) => definir("nome", e.target.value, "produtor.nome")} />}
+                                    <Campo rotulo="Seu nome" dica="Até 80 caracteres." erro={erros["produtor.nome"]}>
+                                        {(a) => <input {...a} className={ENTRADA} value={dados.nome} maxLength={80} autoComplete="name" onChange={(e) => definir("nome", e.target.value.slice(0, 80), "produtor.nome")} />}
                                     </Campo>
                                     <Campo rotulo="Seu telefone" dica="Com DDD, só números. Ex.: 87999990000" erro={erros["produtor.telefone"]}>
                                         {(a) => <input {...a} className={ENTRADA} value={dados.telefone} maxLength={15} inputMode="numeric" autoComplete="tel" onChange={(e) => definir("telefone", formatarTelefone(e.target.value), "produtor.telefone")} />}
@@ -343,8 +393,8 @@ export default function Triagem() {
                                     </Campo>
                                     <Escolha rotulo="Como prefere receber os avisos?" opcoes={CANAIS} valor={dados.canalPreferido} onChange={(v) => definir("canalPreferido", v, "produtor.canalPreferido")} erro={erros["produtor.canalPreferido"]} />
                                     <Escolha rotulo="Prefere ouvir ou ler?" opcoes={LEITURA} valor={dados.preferenciaLeitura} onChange={(v) => definir("preferenciaLeitura", v, "produtor.preferenciaLeitura")} erro={erros["produtor.preferenciaLeitura"]} />
-                                    <Campo rotulo="Há quantos anos trabalha na roça?" dica="Pode deixar em branco." erro={erros["produtor.anosExperiencia"]}>
-                                        {(a) => <input {...a} className={ENTRADA} value={dados.anosExperiencia} inputMode="numeric" onChange={(e) => definir("anosExperiencia", e.target.value, "produtor.anosExperiencia")} />}
+                                    <Campo rotulo="Há quantos anos trabalha na roça?" dica="Pode deixar em branco. De 0 a 99 anos completos." erro={erros["produtor.anosExperiencia"]}>
+                                        {(a) => <input {...a} type="number" min="0" max="99" step="1" className={ENTRADA} value={dados.anosExperiencia} onChange={(e) => definir("anosExperiencia", e.target.value, "produtor.anosExperiencia")} />}
                                     </Campo>
                                     <Escolha rotulo="Um técnico visita a sua roça?" dica="É a assistência técnica rural." opcoes={SIM_NAO} valor={dados.recebeAter} onChange={(v) => definir("recebeAter", v, "produtor.recebeAter")} erro={erros["produtor.recebeAter"]} />
                                     <div className="flex flex-col gap-2">
@@ -379,11 +429,11 @@ export default function Triagem() {
                                 <fieldset disabled={bloqueio.propriedade} className="flex flex-col gap-6 disabled:opacity-60">
                                     {bloqueio.propriedade && <p className="text-texto-2">Sua roça já foi cadastrada. Esses dados não mudam por aqui.</p>}
                                     <p className="text-texto-2">A roça fica em {municipioEscolhido ? `${municipioEscolhido.nome} (${municipioEscolhido.uf})` : "seu município"}.</p>
-                                    <Campo rotulo="Nome da roça" dica="Ex.: Sítio Boa Esperança" erro={erros["propriedade.nome"]}>
-                                        {(a) => <input {...a} className={ENTRADA} value={dados.propNome} maxLength={80} onChange={(e) => definir("propNome", e.target.value, "propriedade.nome")} />}
+                                    <Campo rotulo="Nome da roça" dica="Ex.: Sítio Boa Esperança. Até 80 caracteres." erro={erros["propriedade.nome"]}>
+                                        {(a) => <input {...a} className={ENTRADA} value={dados.propNome} maxLength={80} onChange={(e) => definir("propNome", e.target.value.slice(0, 80), "propriedade.nome")} />}
                                     </Campo>
-                                    <Campo rotulo="Tamanho da roça, em hectares" dica="Um hectare é mais ou menos um campo de futebol." erro={erros["propriedade.areaHa"]}>
-                                        {(a) => <input {...a} className={ENTRADA} value={dados.propAreaHa} inputMode="decimal" onChange={(e) => definir("propAreaHa", e.target.value, "propriedade.areaHa")} />}
+                                    <Campo rotulo="Tamanho da roça, em hectares" dica="De 0,01 a 100.000 ha; até duas casas decimais." erro={erros["propriedade.areaHa"]}>
+                                        {(a) => <input {...a} type="number" min="0.01" max={AREA_MAXIMA_HA} step="0.01" className={ENTRADA} value={dados.propAreaHa} inputMode="decimal" onChange={(e) => definir("propAreaHa", e.target.value, "propriedade.areaHa")} />}
                                     </Campo>
                                     <Campo rotulo="De onde vem a água?" dica="Pode deixar em branco." erro={erros["propriedade.fonteAgua"]}>
                                         {(a) => (
@@ -417,14 +467,14 @@ export default function Triagem() {
                                     </Campo>
                                     {dados.culturaId && (
                                         <>
-                                            <Campo rotulo="Quanto da roça, em hectares?" dica={`Sua roça tem ${dados.propAreaHa || "?"} ha.`} erro={erros["plantio.areaHa"]}>
-                                                {(a) => <input {...a} className={ENTRADA} value={dados.plantioAreaHa} inputMode="decimal" onChange={(e) => definir("plantioAreaHa", e.target.value, "plantio.areaHa")} />}
+                                            <Campo rotulo="Quanto da roça, em hectares?" dica={`Sua roça tem ${dados.propAreaHa || "?"} ha. Use até duas casas decimais.`} erro={erros["plantio.areaHa"]}>
+                                                {(a) => <input {...a} type="number" min="0.01" max={lerNumero(dados.propAreaHa) || undefined} step="0.01" className={ENTRADA} value={dados.plantioAreaHa} inputMode="decimal" onChange={(e) => definir("plantioAreaHa", e.target.value, "plantio.areaHa")} />}
                                             </Campo>
                                             <Campo rotulo="Quando plantou?" erro={erros["plantio.dataPlantio"]}>
-                                                {(a) => <input {...a} type="date" max={hojeEmTexto()} className={ENTRADA} value={dados.dataPlantio} onChange={(e) => definir("dataPlantio", e.target.value, "plantio.dataPlantio")} />}
+                                                {(a) => <input {...a} type="date" min={minimoPlantio} max={hoje} className={ENTRADA} value={dados.dataPlantio} onChange={(e) => definir("dataPlantio", e.target.value, "plantio.dataPlantio")} />}
                                             </Campo>
                                             <Campo rotulo="Quando pretende colher?" erro={erros["plantio.dataColheitaPrevista"]}>
-                                                {(a) => <input {...a} type="date" min={dados.dataPlantio || undefined} className={ENTRADA} value={dados.dataColheita} onChange={(e) => definir("dataColheita", e.target.value, "plantio.dataColheitaPrevista")} />}
+                                                {(a) => <input {...a} type="date" min={minimoColheita} max={maximoColheita} className={ENTRADA} value={dados.dataColheita} onChange={(e) => definir("dataColheita", e.target.value, "plantio.dataColheitaPrevista")} />}
                                             </Campo>
                                             <Escolha rotulo="Em que fase está?" opcoes={ESTAGIOS} valor={dados.estagio} onChange={(v) => definir("estagio", v, "plantio.estagio")} erro={erros["plantio.estagio"]} />
                                         </>
