@@ -287,19 +287,25 @@ export default function Triagem() {
                                 </Link>
                             </div>
                         </div>
+                    ) : conta ? (
+                        <div className="flex flex-col items-start gap-5 rounded-2xl border border-linha bg-fundo p-7">
+                            <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Conta já conectada</p>
+                            <h2 ref={tituloRef} tabIndex={-1} className="font-titulo text-[clamp(26px,3.2vw,38px)] leading-tight font-extrabold uppercase focus:outline-none">
+                                Você já entrou como<br />{conta.produtorNome}.
+                            </h2>
+                            <p className="max-w-[640px] text-texto-2">
+                                Para criar um cadastro ou entrar em outra conta, você precisa sair desta conta primeiro.
+                            </p>
+                            <button type="button" onClick={sair} className="inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.035] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ambar motion-reduce:transition-none">
+                                Sair da conta
+                            </button>
+                        </div>
                     ) : (
                         <form onSubmit={aoEnviarFormulario} noValidate className="flex flex-col gap-8">
-                            {conta ? (
-                                <p className="rounded-2xl border border-linha bg-fundo px-5 py-4 text-texto-2">
-                                    Você já entrou como <strong className="text-bege">{conta.produtorNome}</strong>. Se este cadastro é de outra pessoa,{" "}
-                                    <button type="button" onClick={sair} className="cursor-pointer py-2 font-semibold text-salvia underline underline-offset-4">saia primeiro</button>.
-                                </p>
-                            ) : (
-                                <p className="text-texto-2">
-                                    Já tem cadastro?{" "}
-                                    <Link to="/entrar" className="font-semibold text-salvia underline underline-offset-4">Entrar</Link>
-                                </p>
-                            )}
+                            <p className="text-texto-2">
+                                Já tem cadastro?{" "}
+                                <Link to="/entrar" className="font-semibold text-salvia underline underline-offset-4">Entrar</Link>
+                            </p>
 
                             <ol className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Passos da triagem">
                                 {PASSOS.map((nome, i) => (
