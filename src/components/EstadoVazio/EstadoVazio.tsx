@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import IconeFA from '../IconeFA/IconeFA';
 
 interface EstadoVazioProps {
     mensagem: string;
@@ -18,18 +19,7 @@ export default function EstadoVazio({
 }: EstadoVazioProps) {
     return (
         <div className="flex flex-col items-center gap-5 py-10 text-center">
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.8}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                className="h-12 w-12 text-texto-2/60"
-            >
-                <path d="M3 6h18M3 12h12M3 18h8" />
-            </svg>
+            <IconeFA nome="list" className="h-12 w-12 text-texto-2/60" />
 
             <p className="max-w-sm font-corpo text-lg text-texto-2 leading-relaxed">
                 {mensagem}

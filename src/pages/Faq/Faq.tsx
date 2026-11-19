@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
 import CardDuvida, { type CardDuvidaProps } from "../../components/CardDuvida/CardDuvida";
+import IconeFA from "../../components/IconeFA/IconeFA";
 
 //Duvidas
 const faqData: (CardDuvidaProps & { id: string })[] = [
@@ -171,19 +172,7 @@ export default function Faq() {
                     <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-[880px]">
                         <div className="rounded-xl border border-linha bg-card/60 p-4 backdrop-blur-xs">
                             <div className="flex items-center gap-2.5 text-salvia">
-                                <svg
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                </svg>
+                                <IconeFA nome="circle-check" className="size-5" />
                                 <span className="font-titulo text-sm font-bold uppercase tracking-wider">
                                     100% Gratuito
                                 </span>
@@ -195,19 +184,7 @@ export default function Faq() {
 
                         <div className="rounded-xl border border-linha bg-card/60 p-4 backdrop-blur-xs">
                             <div className="flex items-center gap-2.5 text-ambar">
-                                <svg
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" />
-                                </svg>
+                                <IconeFA nome="cloud" className="size-5" />
                                 <span className="font-titulo text-sm font-bold uppercase tracking-wider">
                                     Guarda Offline
                                 </span>
@@ -219,20 +196,7 @@ export default function Faq() {
 
                         <div className="rounded-xl border border-linha bg-card/60 p-4 backdrop-blur-xs">
                             <div className="flex items-center gap-2.5 text-salvia">
-                                <svg
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="m9 12 2 2 4-4" />
-                                </svg>
+                                <IconeFA nome="circle-check" className="size-5" />
                                 <span className="font-titulo text-sm font-bold uppercase tracking-wider">
                                     Voz e Figuras
                                 </span>
@@ -265,20 +229,7 @@ export default function Faq() {
                                 Buscar pergunta ou palavra-chave
                             </label>
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-texto-2">
-                                <svg
-                                    width="22"
-                                    height="22"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <circle cx="11" cy="11" r="8" />
-                                    <path d="m21 21-4.3-4.3" />
-                                </svg>
+                                <IconeFA nome="magnifying-glass" className="size-[22px]" />
                             </div>
                             <input
                                 id="busca-faq"
@@ -295,18 +246,7 @@ export default function Faq() {
                                     className="absolute inset-y-0 right-0 flex items-center pr-4 text-texto-2 hover:text-bege focus-visible:outline-none"
                                     aria-label="Limpar busca"
                                 >
-                                    <svg
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M18 6 6 18M6 6l12 12" />
-                                    </svg>
+                                    <IconeFA nome="xmark" className="size-[18px]" />
                                 </button>
                             )}
                         </div>
@@ -348,21 +288,7 @@ export default function Faq() {
                             data-reveal
                             className="rounded-2xl border border-linha bg-fundo/70 p-10 text-center"
                         >
-                            <svg
-                                className="mx-auto mb-3 text-texto-2"
-                                width="44"
-                                height="44"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                aria-hidden="true"
-                            >
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="8" y1="12" x2="16" y2="12" />
-                            </svg>
+                            <IconeFA nome="circle-minus" className="mx-auto mb-3 size-11 text-texto-2" />
                             <h3 className="font-titulo text-xl font-bold text-bege">
                                 Nenhuma dúvida encontrada
                             </h3>
@@ -431,19 +357,7 @@ export default function Faq() {
                             className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full bg-salvia px-7 font-titulo text-base font-bold uppercase tracking-wider text-fundo transition-transform hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-salvia"
                         >
                             Falar com nossa equipe
-                            <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                aria-hidden="true"
-                            >
-                                <path d="M5 12h14M13 6l6 6-6 6" />
-                            </svg>
+                            <IconeFA nome="arrow-right" className="size-[18px]" />
                         </Link>
 
                         <Link

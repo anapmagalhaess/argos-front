@@ -1,4 +1,5 @@
 import { useState, useId } from "react";
+import IconeFA from "../IconeFA/IconeFA";
 
 /*
     CardDuvida : Card que expande para as duvidas frequentes da pagina FAQ.
@@ -63,18 +64,7 @@ export default function CardDuvida({
                         }`}
                         aria-hidden="true"
                     >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="m6 9 6 6 6-6" />
-                        </svg>
+                        <IconeFA nome="chevron-down" className="size-5" />
                     </span>
                 </button>
             </h3>

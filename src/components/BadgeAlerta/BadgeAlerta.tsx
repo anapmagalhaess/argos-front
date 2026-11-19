@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import IconeFA from "../IconeFA/IconeFA";
+import type { NomeIconeFA } from "../IconeFA/IconeFA";
 
 /*
     BadgeAlerta: bloco de aviso
@@ -41,38 +42,11 @@ const TAMANHOS: Record<Tamanho, { caixa: string; icone: string }> = {
     compacto: { caixa: "gap-2.5 rounded-xl px-3 py-2 text-[15px]", icone: "h-[22px] w-[22px]"},
 };
 
-// Os traços do ícone de cada nível. Cada nível tem um FORMATO diferente
-
-// (círculo com visto, círculo com "!", triângulo, octógono): cor + desenho + palavra.
-const TRACOS: Record<NivelAlerta, ReactNode> = {
-    // Tudo Certo
-    1: (
-        <>
-        <circle cx="12" cy="12" r="10" />
-        <path d="m7.5 12.5 3 3 6-7" />
-        </>
-    ),
-    // Atencao
-    2: (
-        <>
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 7v6M12 16.5v.5" />
-        </>
-    ),
-    // Perigo
-    3: (
-        <>
-        <path d="M12 3 2 20h20z" />
-        <path d="M12 10v4.5M12 17.5v.5" />
-        </>
-    ),
-    // Grande Perigo
-    4: (
-        <>
-        <path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" />
-        <path d="M12 7v6M12 16.5v.5" />
-        </>
-    ),
+const ICONE_NIVEL: Record<NivelAlerta, NomeIconeFA> = {
+    1: "circle-check",
+    2: "circle-exclamation",
+    3: "triangle-exclamation",
+    4: "skull-crossbones",
 };
 
 export default function BadgeAlerta({
@@ -89,18 +63,7 @@ export default function BadgeAlerta({
 
     return (
     <div data-reveal className={`group flex items-center font-semibold ${classes} ${medidas.caixa} ${className}`}>
-        {/* stroke="currentColor": o ícone herda a cor do texto */}
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            className={`shrink-0 transition-transform duration-200 group-hover:scale-[1.12] group-hover:-rotate-6 motion-reduce:transition-none ${medidas.icone}`}>
-            {TRACOS[nivel]}
-        </svg>
+        <IconeFA nome={ICONE_NIVEL[nivel]} className={`shrink-0 transition-transform duration-200 group-hover:scale-[1.12] group-hover:-rotate-6 motion-reduce:transition-none ${medidas.icone}`} />
 
         <span>
             {mostrarNumero ? `${nivel} · ` : ""}

@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import IconeFA from "../IconeFA/IconeFA";
 import { Link, useLocation } from "react-router";
 import EstadoCarregando from "../EstadoCarregando/EstadoCarregando";
 import { useConta } from "../../contexto/conta";
@@ -162,9 +163,7 @@ function MenuPerfil({
                     )}
                     Olá, {nome}
                 </span>
-                <svg aria-hidden="true" viewBox="0 0 20 20" className={`size-4 shrink-0 transition-transform ${aberto ? "rotate-180" : ""}`} fill="none">
-                    <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <IconeFA nome="chevron-down" className={`size-4 shrink-0 transition-transform ${aberto ? "rotate-180" : ""}`} />
             </button>
 
             {aberto && (

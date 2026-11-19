@@ -3,6 +3,7 @@ import Footer from "../../components/Footer/Footer";
 import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
 import CapsulaAviso, { avisos } from "../../components/CapsulaAviso/CapsulaAviso";
 import BadgeAlerta from "../../components/BadgeAlerta/BadgeAlerta";
+import IconeFA from "../../components/IconeFA/IconeFA";
 import { Link } from "react-router";
 
 export default function Sobre() {
@@ -72,10 +73,7 @@ export default function Sobre() {
         <div className="[display:flex] [flex-wrap:wrap] [gap:36px_56px] [margin-top:44px]">
           <div className="[flex:1_1_280px] [display:flex] [gap:20px] [align-items:flex-start] [min-width:0] max-[500px]:[gap:12px] max-[500px]:[flex:1_1_100%] max-[500px]:[flex-direction:column] max-[500px]:[gap:12px] max-[500px]:[min-width:0]">
             <div className="ic [flex:0_0_96px] [height:96px] max-[500px]:[flex:0_0_56px] max-[500px]:[height:56px] [border-radius:50%] [background:var(--color-fundo)] [display:flex] [align-items:center] [justify-content:center]">
-              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#D9A650" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" />
-              </svg>
+              <IconeFA nome="sun" className="size-[52px] text-ambar" />
             </div>
           <div>
             <h3 className="font-titulo m-0 [font-size:24px] max-[500px]:[font-size:20px] [color:var(--color-fundo)]">Norte e Nordeste</h3>
@@ -85,9 +83,7 @@ export default function Sobre() {
         </div>
         <div className="[flex:1_1_280px] [display:flex] [gap:20px] [align-items:flex-start] [min-width:0] max-[500px]:[gap:12px] max-[500px]:[flex:1_1_100%] max-[500px]:[flex-direction:column] max-[500px]:[gap:12px] max-[500px]:[min-width:0] [margin-top:36px]">
           <div className="ic [flex:0_0_96px] [height:96px] max-[500px]:[flex:0_0_56px] max-[500px]:[height:56px] [border-radius:50%] [background:var(--color-fundo)] [display:flex] [align-items:center] [justify-content:center]">
-            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#7DBE8C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 3s5 6 5 10a5 5 0 0 1-10 0c0-4 5-10 5-10z" />
-              </svg>
+            <IconeFA nome="droplet" className="size-[52px] text-salvia" />
           </div>
           <div>
             <h3 className="font-titulo m-0 [font-size:24px] max-[500px]:[font-size:20px] [color:var(--color-fundo)]">Sul</h3>
