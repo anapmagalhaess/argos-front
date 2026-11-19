@@ -10,6 +10,7 @@ import EstadoVazio from "../../components/EstadoVazio/EstadoVazio";
 import GerenciarPlantios from "../../components/GerenciarPlantios/GerenciarPlantios";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
+import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
 import { useConta } from "../../contexto/conta";
 import { ESTAGIOS, rotuloDe } from "../../data/opcoes";
 import { culturaPorId, municipioPorId, rotuloDoMunicipio } from "../../data/referencias";
@@ -144,13 +145,14 @@ export default function Hoje() {
 
     return (
         <main className="flex min-h-screen min-h-svh w-full flex-col overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(700px_480px_at_100%_60%,rgba(125,190,140,.06),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_38%,var(--color-fundo)_100%)]">
+            <ScrollReveal />
             <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <div aria-hidden="true" className="pointer-events-none absolute -right-28 -top-36 size-[440px] rounded-full border border-salvia/10 shadow-[0_0_0_22px_rgba(125,190,140,.025),0_0_0_54px_rgba(125,190,140,.018)]" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[10%] top-24 size-44 rounded-full bg-salvia/10 blur-[70px]" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[20%] top-24 hidden size-2 rounded-full bg-ambar shadow-[0_0_0_8px_rgba(217,166,80,.08),0_0_24px_rgba(217,166,80,.55)] md:block" />
                 <div aria-hidden="true" className="pointer-events-none absolute right-[34%] top-48 hidden size-1.5 rounded-full bg-salvia shadow-[0_0_0_7px_rgba(125,190,140,.08)] md:block" />
                 <Navbar />
-                <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
+                <div data-reveal className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
                     <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Hoje · Painel da roça</p>
                     <h1 className="font-titulo text-[clamp(40px,5.4vw,72px)] leading-none font-extrabold uppercase">
                         {sessao ? (
@@ -170,7 +172,7 @@ export default function Hoje() {
             <section className="relative isolate flex-1 overflow-hidden border-t border-linha bg-[radial-gradient(ellipse_at_50%_0%,rgba(125,190,140,.035),transparent_58%)] py-12 md:py-16">
                 <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-24 z-0 hidden size-72 rounded-full bg-ambar/[.045] blur-3xl xl:block" />
                 <div aria-hidden="true" className="pointer-events-none absolute -right-24 bottom-0 z-0 hidden size-80 rounded-full bg-salvia/[.05] blur-3xl xl:block" />
-                <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 sm:px-7">
+                <div data-reveal className="relative z-10 mx-auto w-full max-w-[1200px] px-5 sm:px-7">
                     {!sessao ? (
                         <div className="mx-auto max-w-[760px] rounded-3xl border border-linha bg-card/90 p-6 shadow-[0_24px_80px_rgba(0,0,0,.24)] sm:p-10">
                             <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Seu painel começa aqui</p>

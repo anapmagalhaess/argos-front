@@ -5,6 +5,7 @@ import { AvisoDeTela, Campo, ENTRADA, Escolha } from "../../components/CampoForm
 import EstadoCarregando from "../../components/EstadoCarregando/EstadoCarregando";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
+import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
 import { CANAIS, ESTAGIOS, FONTES_DE_AGUA, IRRIGACOES, LEITURA, SIM_NAO } from "../../data/opcoes";
 import { CULTURAS, MUNICIPIOS, municipioPorId } from "../../data/referencias";
 import { ApiError, cadastrarPlantio, cadastrarPropriedade, cadastrarProdutor } from "../../services/api";
@@ -285,6 +286,7 @@ export default function Triagem() {
 
     return (
         <main className="w-full overflow-hidden bg-fundo font-corpo text-lg leading-relaxed text-bege [background:radial-gradient(700px_420px_at_82%_0%,rgba(125,190,140,.12),transparent_70%),linear-gradient(180deg,var(--color-card)_0%,var(--color-fundo)_38%,var(--color-fundo)_100%)]">
+            <ScrollReveal />
             {enviando && <EstadoCarregando titulo="Salvando o seu cadastro…" descricao="A primeira chamada ao servidor pode levar até cerca de 1 minuto." telaInteira />}
             <section className="relative overflow-visible bg-[radial-gradient(700px_420px_at_84%_30%,rgba(125,190,140,.16),transparent_70%),radial-gradient(520px_320px_at_6%_0%,rgba(217,166,80,.10),transparent_70%),#17110D]">
                 <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-25">
@@ -301,7 +303,7 @@ export default function Triagem() {
                     </svg>
                 </div>
                 <Navbar />
-                <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
+                <div data-reveal className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-7 pt-14 pb-16">
                     <p className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[.14em] text-salvia"><span aria-hidden="true" className="size-2 rounded-full bg-salvia shadow-[0_0_0_7px_rgba(125,190,140,.10),0_0_22px_rgba(125,190,140,.55)]" />Triagem</p>
                     <h1 className="font-titulo text-[clamp(40px,5.4vw,72px)] leading-none font-extrabold uppercase">Conte da sua roça.</h1>
                     <p className="max-w-[620px] text-[clamp(19px,2vw,22px)] text-texto-2">
@@ -314,7 +316,7 @@ export default function Triagem() {
             <section className="relative isolate overflow-hidden border-t border-linha bg-card py-16">
                 <div aria-hidden="true" className="pointer-events-none absolute -right-16 top-10 z-0 size-64 rounded-full bg-salvia/[.06] blur-3xl" />
                 <div aria-hidden="true" className="pointer-events-none absolute -bottom-20 -left-16 z-0 size-72 rounded-full bg-ambar/[.05] blur-3xl" />
-                <div className="relative z-10 mx-auto w-full max-w-[820px] px-7">
+                <div data-reveal className="relative z-10 mx-auto w-full max-w-[820px] px-7">
                     {concluido ? (
                         <div className="flex flex-col gap-6">
                             <p className="text-sm font-semibold uppercase tracking-[.14em] text-salvia">Cadastro feito</p>
