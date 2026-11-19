@@ -7,10 +7,9 @@ import type {
 } from '../types/predicao'
 
 /**
- * Endereço da API Flask. Ela roda só na máquina da demonstração (decisão do grupo em 10/11),
- * então o padrão é o endereço local do Flask. Para mudar, crie VITE_ML_API_URL no arquivo .env.
+ * Endereço da API de IA publicada.
  */
-const API_ML: string = import.meta.env.VITE_ML_API_URL ?? 'http://localhost:5000'
+const API_ML: string = import.meta.env.VITE_ML_API_URL || 'https://argos-ia-api.onrender.com'
 
 /** Faz o pedido com fetch e devolve o JSON já com o tipo certo. Resposta com erro vira exceção. */
 async function pedirJson<T>(caminho: string, sinal: AbortSignal, corpo?: EntradaPredicao): Promise<T> {

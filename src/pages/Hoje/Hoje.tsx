@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { Link } from "react-router";
 import BadgeAlerta from "../../components/BadgeAlerta/BadgeAlerta";
+import CardRiscoQuebra from "../../components/CardRiscoQuebra/CardRiscoQuebra";
 import IconeFA from "../../components/IconeFA/IconeFA";
 import type { NomeIconeFA } from "../../components/IconeFA/IconeFA";
 import { AvisoDeTela } from "../../components/CampoForm/CampoForm";
@@ -18,16 +19,29 @@ import { listarPlantios } from "../../services/api";
 import { ROTULO_TIPO_ALERTA } from "../../types/alerta";
 import type { Alerta } from "../../types/alerta";
 import type { Plantio } from "../../types/api";
+import type { EntradaPredicao } from "../../types/predicao";
 import { diasAte, formatarData } from "../../utils/datas";
 
-type Aba = "visao" | "plantios" | "avisos" | "previsoes";
+type Aba = "visao" | "plantios" | "avisos" | "previsoes" | "risco";
 
 const ABAS: { id: Aba; rotulo: string; simbolo: NomeIconeFA }[] = [
     { id: "visao", rotulo: "Visão geral", simbolo: "compass" },
     { id: "plantios", rotulo: "Plantios", simbolo: "seedling" },
     { id: "avisos", rotulo: "Avisos", simbolo: "bell" },
     { id: "previsoes", rotulo: "Previsões", simbolo: "chart-line" },
+    { id: "risco", rotulo: "Risco de quebra", simbolo: "triangle-exclamation" },
 ];
+
+// Indicadores de referência usados pelo modelo. A região vem do município selecionado na conta.
+const ENTRADA_RISCO_REFERENCIA: Omit<EntradaPredicao, "regiao_sul"> = {
+    chuva_total_mm: 482.2,
+    temp_media: 25.67,
+    temp_max_media: 31.42,
+    dias_acima_35: 48,
+    maior_seq_seca: 26,
+    oni: 0.81,
+    media_5a: 669.6,
+};
 
 // Níveis 1 a 4 (cor + número + palavra, nunca só cor)
 const NIVEL: Record<number, { palavra: string; cor: string }> = {
@@ -50,6 +64,12 @@ function textoDias(d: number): string {
 
 export default function Hoje() {
     const { conta: sessao } = useConta();
+    const municipio = sessao ? municipioPorId(sessao.municipioId) : undefined;
+    const regiaoSul = municipio?.regiao === "SUL";
+    const entradaRisco = useMemo<EntradaPredicao | null>(() => {
+        if (!municipio) return null;
+        return { ...ENTRADA_RISCO_REFERENCIA, regiao_sul: regiaoSul ? 1 : 0 };
+    }, [municipio, regiaoSul]);
     const propriedadeId = sessao?.propriedadeId ?? null;
     const plantios = useBusca(
         `plantios-${propriedadeId}`,
@@ -293,6 +313,13 @@ export default function Hoje() {
                                             A estimativa de risco e produtividade por inteligência artificial é opcional no MVP e depende da API de demonstração. Esta aba mostra as datas de colheita cadastradas.
                                         </p>
                                     </div>
+                                )}
+
+                                {aba === "risco" && entradaRisco && (
+                                    <CardRiscoQuebra
+                                        entrada={entradaRisco}
+                                        legenda={`Estimativa para a região ${municipio?.regiao === "SUL" ? "Sul" : "Nordeste"} · ${rotuloDoMunicipio(sessao.municipioId)}`}
+                                    />
                                 )}
 
                             </div>
