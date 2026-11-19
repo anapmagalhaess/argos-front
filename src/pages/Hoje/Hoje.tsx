@@ -16,19 +16,21 @@ import { culturaPorId, municipioPorId, rotuloDoMunicipio } from "../../data/refe
 import { useBusca } from "../../hooks/useBusca";
 import { buscarAlertasDoMunicipio } from "../../services/alertaService";
 import { listarPlantios } from "../../services/api";
+import { buscarClimaMunicipalSeteDias } from "../../services/condicoesService";
 import { ROTULO_TIPO_ALERTA } from "../../types/alerta";
 import type { Alerta } from "../../types/alerta";
 import type { Plantio } from "../../types/api";
 import type { EntradaPredicao } from "../../types/predicao";
 import { diasAte, formatarData } from "../../utils/datas";
 
-type Aba = "visao" | "plantios" | "avisos" | "previsoes" | "risco";
+type Aba = "visao" | "plantios" | "avisos" | "previsoes" | "clima" | "risco";
 
 const ABAS: { id: Aba; rotulo: string; simbolo: NomeIconeFA }[] = [
     { id: "visao", rotulo: "Visão geral", simbolo: "compass" },
     { id: "plantios", rotulo: "Plantios", simbolo: "seedling" },
     { id: "avisos", rotulo: "Avisos", simbolo: "bell" },
     { id: "previsoes", rotulo: "Previsões", simbolo: "chart-line" },
+    { id: "clima", rotulo: "Clima", simbolo: "cloud" },
     { id: "risco", rotulo: "Risco de quebra", simbolo: "triangle-exclamation" },
 ];
 
@@ -54,6 +56,22 @@ const NIVEL: Record<number, { palavra: string; cor: string }> = {
 const BOTAO =
     "inline-flex min-h-14 items-center justify-center rounded-[14px] border-2 border-salvia bg-salvia px-[30px] font-titulo text-[17px] font-semibold uppercase tracking-[0.04em] text-fundo transition-transform duration-150 hover:scale-[1.035] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ambar motion-reduce:transition-none";
 
+function descreverTempo(codigo: number): { icone: NomeIconeFA; descricao: string; cor: string } {
+    if (codigo === 0) return { icone: "sun", descricao: "Céu limpo", cor: "text-ambar" };
+    if (codigo === 1) return { icone: "cloud-sun", descricao: "Predomínio de sol", cor: "text-ambar" };
+    if (codigo === 2) return { icone: "cloud-sun", descricao: "Sol entre nuvens", cor: "text-ambar" };
+    if (codigo === 3) return { icone: "cloud", descricao: "Nublado", cor: "text-texto-2" };
+    if (codigo === 45 || codigo === 48) return { icone: "smog", descricao: "Neblina", cor: "text-texto-2" };
+    if (codigo >= 51 && codigo <= 57) return { icone: "cloud-rain", descricao: "Garoa", cor: "text-salvia" };
+    if (codigo >= 61 && codigo <= 67) return { icone: "cloud-rain", descricao: "Chuva", cor: "text-salvia" };
+    if (codigo === 71 || codigo === 73 || codigo === 75 || codigo === 77 || codigo === 85 || codigo === 86) {
+        return { icone: "snowflake", descricao: "Neve", cor: "text-salvia" };
+    }
+    if (codigo >= 80 && codigo <= 82) return { icone: "cloud-showers-heavy", descricao: "Pancadas de chuva", cor: "text-salvia" };
+    if (codigo >= 95) return { icone: "cloud-bolt", descricao: "Trovoadas", cor: "text-ambar" };
+    return { icone: "cloud", descricao: "Condição variável", cor: "text-texto-2" };
+}
+
 function saudacao(h: number): string {
     return h < 5 ? "Boa madrugada" : h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
 }
@@ -68,7 +86,8 @@ export default function Hoje() {
     const regiaoSul = municipio?.regiao === "SUL";
     const entradaRisco = useMemo<EntradaPredicao | null>(() => {
         if (!municipio) return null;
-        return { ...ENTRADA_RISCO_REFERENCIA, regiao_sul: regiaoSul ? 1 : 0 };
+        const regiao_sul: 0 | 1 = regiaoSul ? 1 : 0;
+        return { ...ENTRADA_RISCO_REFERENCIA, regiao_sul };
     }, [municipio, regiaoSul]);
     const propriedadeId = sessao?.propriedadeId ?? null;
     const plantios = useBusca(
@@ -80,6 +99,10 @@ export default function Hoje() {
         sessao && municipioPorId(sessao.municipioId)
             ? (sinal) => buscarAlertasDoMunicipio(sessao.municipioId, sinal)
             : null,
+    );
+    const clima = useBusca(
+        `clima-${municipio?.id}`,
+        municipio ? (sinal) => buscarClimaMunicipalSeteDias(municipio.latitude, municipio.longitude, sinal) : null,
     );
     const [hora, setHora] = useState(() => new Date().getHours());
     const [aba, setAba] = useState<Aba>("visao");
@@ -274,6 +297,63 @@ export default function Hoje() {
                                     </div>
                                 )}
 
+                                {aba === "clima" && (
+                                    <div>
+                                        <Titulo etiqueta={`Open-Meteo · ${rotuloDoMunicipio(sessao.municipioId)}`} titulo="Clima do município" />
+                                        {!municipio && <EstadoVazio mensagem="Não encontramos a localização deste município para consultar o clima." />}
+                                        {clima.carregando && <AvisoDeTela tipo="carregando">Buscando o clima de {municipio?.nome}…</AvisoDeTela>}
+                                        {clima.erro && <AvisoDeTela tipo="erro" acao={{ rotulo: "Tentar de novo", aoClicar: clima.tentarDeNovo }}>{clima.erro.message}</AvisoDeTela>}
+                                        {clima.dados && (
+                                            <>
+                                                <div className="mb-5 flex items-center gap-4 rounded-2xl border border-linha bg-fundo/70 p-5">
+                                                    <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-ambar/10 text-ambar">
+                                                        <IconeFA nome="temperature-half" className="size-7" />
+                                                    </span>
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-texto-2">Temperatura agora em {municipio?.nome}</p>
+                                                        <p className="font-titulo text-3xl font-extrabold">{Math.round(clima.dados.temperaturaAgora)} °C</p>
+                                                    </div>
+                                                </div>
+                                                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                                                    {clima.dados.dias.map((dia, indice) => {
+                                                        const tempo = descreverTempo(dia.codigoTempo);
+                                                        const nomeDoDia = indice === 0
+                                                            ? "Ontem"
+                                                            : indice === 1
+                                                                ? "Hoje"
+                                                                : indice === 2
+                                                                    ? "Amanhã"
+                                                                    : new Date(`${dia.data}T12:00:00`).toLocaleDateString("pt-BR", { weekday: "long" });
+                                                        return (
+                                                            <article key={dia.data} className={`rounded-2xl border bg-fundo/70 p-5 ${indice === 1 ? "border-salvia/70 shadow-[0_0_24px_rgba(125,190,140,.08)]" : "border-linha"}`}>
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className={`flex size-14 shrink-0 items-center justify-center rounded-full bg-card ${tempo.cor}`}>
+                                                                        <IconeFA nome={tempo.icone} className="size-8" />
+                                                                    </span>
+                                                                    <div>
+                                                                        <p className="text-sm font-semibold capitalize text-salvia">{nomeDoDia}</p>
+                                                                        <h3 className="font-titulo text-lg font-bold">{formatarData(dia.data)}</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <p className={`mt-4 font-titulo text-lg font-bold ${tempo.cor}`}>{tempo.descricao}</p>
+                                                                <div className="mt-4 flex items-baseline justify-between gap-2">
+                                                                    <span className="text-sm text-texto-2">Mín / máx</span>
+                                                                    <span className="font-titulo text-xl font-bold">{Math.round(dia.minima)}° <span className="text-texto-2">/</span> {Math.round(dia.maxima)} °C</span>
+                                                                </div>
+                                                                <div className="mt-3 flex items-center justify-between border-t border-linha pt-3 text-sm">
+                                                                    <span className="flex items-center gap-2 text-texto-2"><IconeFA nome="droplet" className="text-salvia" /> Chance de chuva</span>
+                                                                    <strong className="text-bege">{Math.round(dia.chanceDeChuva)}%</strong>
+                                                                </div>
+                                                                <p className="mt-2 text-right text-xs text-texto-2">Acumulado: {dia.chuvaMm.toLocaleString("pt-BR")} mm</p>
+                                                            </article>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+
                                 {aba === "previsoes" && (
                                     <div>
                                         <Titulo etiqueta="Calendário da safra" titulo="Previsões de colheita" className="mb-4" />
@@ -310,7 +390,7 @@ export default function Hoje() {
                                             </div>
                                         )}
                                         <p className="mt-6 rounded-xl border border-ambar/20 bg-ambar/[.06] px-4 py-3 text-sm text-texto-2">
-                                            A estimativa de risco e produtividade por inteligência artificial é opcional no MVP e depende da API de demonstração. Esta aba mostra as datas de colheita cadastradas.
+                                            Estas são as datas de colheita estimadas conforme as informações cadastradas para cada plantio.
                                         </p>
                                     </div>
                                 )}
@@ -318,7 +398,7 @@ export default function Hoje() {
                                 {aba === "risco" && entradaRisco && (
                                     <CardRiscoQuebra
                                         entrada={entradaRisco}
-                                        legenda={`Estimativa para a região ${municipio?.regiao === "SUL" ? "Sul" : "Nordeste"} · ${rotuloDoMunicipio(sessao.municipioId)}`}
+                                        legenda={`Região de ${rotuloDoMunicipio(sessao.municipioId)}; usa dados climáticos de referência do modelo.`}
                                     />
                                 )}
 

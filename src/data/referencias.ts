@@ -9,6 +9,8 @@ export interface MunicipioRef {
     nome: string
     uf: string
     regiao: string
+    latitude: number
+    longitude: number
 }
 
 export interface CulturaRef {
@@ -18,13 +20,13 @@ export interface CulturaRef {
 }
 
 export const MUNICIPIOS: MunicipioRef[] = [
-    { id: 4302105, nome: 'Bento Gonçalves', uf: 'RS', regiao: 'SUL' },
-    { id: 4104808, nome: 'Cascavel', uf: 'PR', regiao: 'SUL' },
-    { id: 4204202, nome: 'Chapecó', uf: 'SC', regiao: 'SUL' },
-    { id: 2918407, nome: 'Juazeiro', uf: 'BA', regiao: 'NORDESTE' },
-    { id: 2408003, nome: 'Mossoró', uf: 'RN', regiao: 'NORDESTE' },
-    { id: 4314100, nome: 'Passo Fundo', uf: 'RS', regiao: 'SUL' },
-    { id: 2208007, nome: 'Picos', uf: 'PI', regiao: 'NORDESTE' },
+    { id: 4302105, nome: 'Bento Gonçalves', uf: 'RS', regiao: 'SUL', latitude: -29.17139, longitude: -51.51917 },
+    { id: 4104808, nome: 'Cascavel', uf: 'PR', regiao: 'SUL', latitude: -24.95583, longitude: -53.45528 },
+    { id: 4204202, nome: 'Chapecó', uf: 'SC', regiao: 'SUL', latitude: -27.09639, longitude: -52.61833 },
+    { id: 2918407, nome: 'Juazeiro', uf: 'BA', regiao: 'NORDESTE', latitude: -9.41167, longitude: -40.49861 },
+    { id: 2408003, nome: 'Mossoró', uf: 'RN', regiao: 'NORDESTE', latitude: -5.1875, longitude: -37.34417 },
+    { id: 4314100, nome: 'Passo Fundo', uf: 'RS', regiao: 'SUL', latitude: -28.26278, longitude: -52.40667 },
+    { id: 2208007, nome: 'Picos', uf: 'PI', regiao: 'NORDESTE', latitude: -7.07694, longitude: -41.46694 },
 ]
 
 // Os ids seguem a ordem das sequences do banco: MILHO é 1, FEIJAO 2, e assim por diante

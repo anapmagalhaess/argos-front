@@ -1,11 +1,11 @@
 /*
-    Tipos da API Flask de IA (repositório argos-ml-api), que roda na máquina da demonstração.
+    Tipos da API de IA publicada (repositório argos-ml-api).
     Contrato: Documento-Guia, item 8.5.
 */
 
 /**
  * O clima de uma safra num município: a mesma linha que os modelos usaram no treino.
- * Os nomes precisam ser IGUAIS aos de pacote["colunas"] salvos no .joblib; a Flask confere
+ * Os nomes precisam ser IGUAIS aos de pacote["colunas"] salvos no .joblib; a API confere
  * campo por campo e devolve 400 se faltar algum.
  */
 export interface EntradaPredicao {
@@ -27,7 +27,7 @@ export interface EntradaPredicao {
     media_5a: number
 }
 
-/** Respostas de risco que a Flask devolve. */
+/** Respostas de risco que a API de IA devolve. */
 export type NivelRisco = 'BAIXO' | 'MEDIO' | 'ALTO'
 
 /** POST /api/v1/risco-quebra -> 200 */
@@ -51,7 +51,7 @@ export interface RespostaSaudeMl {
     status: string
 }
 
-/** Erro da Flask (400 quando falta campo): { "erro": "Falta o campo chuva_total_mm" } */
+/** Erro da API de IA (400 quando falta campo): { "erro": "Falta o campo chuva_total_mm" } */
 export interface ErroApiMl {
     erro: string
 }

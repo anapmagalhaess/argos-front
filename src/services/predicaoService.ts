@@ -22,7 +22,7 @@ async function pedirJson<T>(caminho: string, sinal: AbortSignal, corpo?: Entrada
     })
 
     if (!resposta.ok) {
-        // A Flask explica o problema no campo "erro" (ex.: "Falta o campo oni").
+        // A API explica o problema no campo "erro" (ex.: "Falta o campo oni").
         // Se a resposta não for JSON, fica a mensagem com o número do erro.
         let mensagem = `A API de previsão respondeu com o erro ${resposta.status}.`
         try {
@@ -37,7 +37,7 @@ async function pedirJson<T>(caminho: string, sinal: AbortSignal, corpo?: Entrada
     return (await resposta.json()) as T
 }
 
-/** GET /api/v1/saude: confere se a Flask está no ar. */
+/** GET /api/v1/saude: confere se a API de IA está no ar. */
 export function verificarApiMl(sinal: AbortSignal): Promise<RespostaSaudeMl> {
     return pedirJson<RespostaSaudeMl>('/api/v1/saude', sinal)
 }

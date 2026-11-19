@@ -71,6 +71,31 @@ export interface RespostaDoClima {
     }
 }
 
+/** Ontem, hoje e os próximos cinco dias no município selecionado. */
+export interface ClimaMunicipalSeteDias {
+    temperaturaAgora: number
+    dias: {
+        data: string
+        codigoTempo: number
+        minima: number
+        maxima: number
+        chanceDeChuva: number
+        chuvaMm: number
+    }[]
+}
+
+export interface RespostaClimaMunicipalSeteDias {
+    current: { temperature_2m: number }
+    daily: {
+        time: string[]
+        weather_code: number[]
+        temperature_2m_max: number[]
+        temperature_2m_min: number[]
+        precipitation_probability_max: (number | null)[]
+        precipitation_sum: number[]
+    }
+}
+
 export interface RespostaDoAr {
     current: { us_aqi: number | null; pm2_5: number | null; pm10: number | null }
 }

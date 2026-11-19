@@ -1,4 +1,4 @@
-import type { ArDaLavoura, ClimaDaLavoura, RespostaDoAr, RespostaDoClima } from '../types/condicoes'
+import type { ArDaLavoura, ClimaDaLavoura, ClimaMunicipalSeteDias, RespostaClimaMunicipalSeteDias, RespostaDoAr, RespostaDoClima } from '../types/condicoes'
 
 /** Open-Meteo: previsão do tempo e qualidade do ar, gratuitas e sem chave. */
 const API_DO_CLIMA = 'https://api.open-meteo.com/v1/forecast'
@@ -33,6 +33,35 @@ export async function buscarClima(latitude: number, longitude: number, sinal: Ab
         chanceDeChuva: dados.daily.precipitation_probability_max[0] ?? 0,
         chuvaMm: dados.daily.precipitation_sum[0] ?? 0,
         umidadeDoSolo: umidades.length ? umidades[Math.max(horaAtual, 0)] : null,
+    }
+}
+
+/** Clima de ontem e previsão de hoje mais os próximos cinco dias no município selecionado. */
+export async function buscarClimaMunicipalSeteDias(
+    latitude: number,
+    longitude: number,
+    sinal: AbortSignal,
+): Promise<ClimaMunicipalSeteDias> {
+    const parametros = new URLSearchParams({
+        latitude: String(latitude),
+        longitude: String(longitude),
+        current: 'temperature_2m',
+        daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum',
+        past_days: '1',
+        forecast_days: '6',
+        timezone: 'auto',
+    })
+    const dados = await buscarJson<RespostaClimaMunicipalSeteDias>(`${API_DO_CLIMA}?${parametros}`, sinal)
+    return {
+        temperaturaAgora: dados.current.temperature_2m,
+        dias: dados.daily.time.map((data, i) => ({
+            data,
+            codigoTempo: dados.daily.weather_code[i],
+            minima: dados.daily.temperature_2m_min[i],
+            maxima: dados.daily.temperature_2m_max[i],
+            chanceDeChuva: dados.daily.precipitation_probability_max[i] ?? 0,
+            chuvaMm: dados.daily.precipitation_sum[i] ?? 0,
+        })),
     }
 }
 
