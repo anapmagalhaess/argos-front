@@ -2,6 +2,7 @@ import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
 import ScrollReveal from "../../components/ScrollReveal/ScrollReveal";
 import CardContato from "../../components/CardContato/CardContato";
+import type { CardContatoProps } from "../../components/CardContato/CardContato";
 import IconeFA from "../../components/IconeFA/IconeFA";
 
 // Canais de contato
@@ -34,7 +35,7 @@ const canais = [
         valor: "(11) 4000-0000",
         icone: "phone",
     },
-];
+] satisfies CardContatoProps[];
 
 export default function Contato() {
     return (
